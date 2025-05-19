@@ -1,0 +1,42 @@
+version: "3.8"
+services:
+  # Instructions for docker compose to build the image for our API,
+  # run that image to create and run a container
+  api:
+    # Path to the Dockerfile file that builds the image and the
+    build: "./api"
+    container_name: "API"
+    ports:
+      # The dockerfile for our api exposes port 4000, meaning the application
+      # runs on port 4000 inside the container. To have our HTTP traffic from our local machine to reach
+      # our application, we'll do port mapping. As a result traffic from port 4000 on our local machine
+      # can reach the process in the container.
+      - "4000:4000"
+
+    volumes:
+      # Map the API directory to /app. In a technical leve, the api directory is copied AND mirrored inside the container. More speficially
+      # our /api folder is copied and mirror in inside the  container's app directory. When we mean mirrored, any changes that happen inside that
+      # folder will also happen inside the container's copy of that folder. This is a way to make sure even if the source code changes, we don't
+      # have to rebuild an image and run a new container.
+      - ./api:/app
+
+      # The issue with having the above volume is that changes inside the node_modules container will be reflected inside the container's node_modules.
+      # This is an issue because node_modules and mirroring dependency folders like it is very unperformant. A lot of files to copy over to the container, etc.
+      # So to exclude something from being mirrored in the /app directory volume, we'll use a "anonymous volume". First know that Docker creates a separate file
+      # system for each container, we already know that. here we create a volume that maps the local node directory to the the docker container directory (/app/node_modules)
+      - /app/node_modules
+
+  client:
+    build: "./client"
+    container_name: "Client"
+    ports:
+      - "3000:3000"
+
+    # Equivalent to the -i flag with docker run, this lets hyou send input into the container.
+    # Used for interactive processes that require user input, so if you don't have this, you're not going to
+    # be able to send input through the command line.
+    stdin_open: true
+
+    # Equivalent to -t flag, creates a terminal for the container. Without this, the container won't have a terminal, so
+    # you're not going to be able to do docker exec into it.
+    tty: true

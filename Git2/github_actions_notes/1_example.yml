@@ -1,0 +1,70 @@
+name: Example 1 CI Workflow 
+
+# These are triggers, we will run our workflows file when we get one of these.
+on: [push, pull_request] 
+  jobs:
+    # Job: Stage for building the project
+    # Each job will need the OS that it runs on. As well, you'll need to 
+    # have some steps to define what your action/job does.
+    build:
+      # Defines the OS that the job runs on.
+      runs-on: ubuntu-latest
+      steps:
+        # Clones the repository onto the runner so it can access my code.
+        - name: Checkout Code
+          uses: actions/checkout@v3
+
+        # Instals Node.js version 10
+        - name: Setup Node.js
+          uses: actions/setup-node@3
+          with:
+            node-version: "10"
+  
+        # Installs dependencies needed for the project.
+        - name Install dependencies
+          run: npm install
+
+        # Build the project; the given job is done
+        - name: Build project
+          run: npm run build
+
+        # Avoids reinstalling dependencies every time. Every time we build, we store a key 
+        # that depends on the hash of hte package-lock.json. If the lock file changes, it means nwe dependency or setup, and so the hash gets changed
+        - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+
+    # Stage is for testing the project
+    # NOTE: These run in parallel, if you want different behavior, then use "needs" to ensure that this only runs when something else is successful.
+    test:
+      runs-on: ubuntu-latest
+
+      # Ensures the test stage only runs when the build stage is finished successfully.
+      needs: build 
+      steps:
+        - name: Checkout Code
+          uses: actions/checkout@v3
+
+        - name: Setup Node.js
+          uses: actions/setup-node@v3
+          with:
+            node-version: "18"
+
+        # GitHub Actions caching works by hashing package-lock.json (or yarn.lock for Yarn) to generate a unique key, such
+        #  as ubuntu-node-abc123. When a workflow runs, it checks if a cache with that key exists—if found, node_modules
+        #  is restored, skipping npm install for faster execution. If package-lock.json changes (e.g., after adding or updating dependencies), the hash changes, leading to a new cache. The restore-keys option allows fallback to older caches if an exact match isn’t found. This 
+        # approach ensures dependency freshness, speeds up CI/CD, and is widely used in enterprise setups for efficiency and reliability.
+        - name: Restore cached dependencies
+          uses: actions/cache@v3
+          with:
+            path: node_modules
+            key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+
+        - name: Run tests
+          run: npm run test
+        

@@ -1,0 +1,94 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+
+name: Java CI with Gradle
+
+# So this workflow activates when we push code to the main branch, or
+# when we have a pull request to the main branch. These are the events/triggers we talked about.
+# You can see a full list of events here: https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+# In our CI/CD pipeline workflow, we're going to have a couple of different jobs that are run. So we have two main jobs, one for building the project and the other one for handling depenedencies
+# that the project runs. Each job is going to have a sequence of steps, which indicates how that job is implemented and what it does.
+jobs:
+  build:
+    # This job runs on the Ubuntu linux distro. However, what if you need to test all three operating systems?
+    # You'd use something called a matrix, which is when you want to use multiple values such as multiple operating
+    # systems or multiple versions of Java
+    # runs-on: ubuntu-latest
+
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+
+    permissions:
+      contents: read
+
+    steps:
+      # Checks out or copies the code of our repository or changes. These are implemented by the people at GitHub themselves since it's used so much. But the idea is that
+      # in order to build your code, the GitHub Actions software probably needs your code first. Whenever someone creates a github action, they have an action.yaml file, they publish it
+      # on GitHub, we're able to use their action here just like this using the "uses" keyword. If we use the keyword "run" it means we're not running a GitHub action from GitHub, but we're
+      # actually just running a command from linux or the command line.
+      - uses: actions/checkout@v4
+
+      # This action basically installs Java in our build environment. We do the "uses" attribute to use a pre-built action to install Java in the GitHub Actions build environment.
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+
+      # This action sets up the gradle build tool.
+      # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
+      # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+
+      - name: Build with Gradle Wrapper
+        run: ./gradlew build
+
+      # Let's have one step of our build process be just creating an image and pushing the image
+      # to some container registry, like DockerHub. However, we know that this is going to be quite a few
+      # docker commands for our "run" keyword. To execute multiple commands with "run" you have to use the pipe
+      # syntax. So we could run some commands to do this, but since building and pushing an image is a common
+      # use-case and thing, there's probably already a GitHub action that's published for it.
+      - name: Build and Push Docker Image
+        uses: mr-smithers-excellent/docker-build-push@v4
+        # Here are the parameters that you can use
+        with:
+          # Here you put the naem fo your image and whatnot
+          image: <image-name>
+          # Indicates that you're pushing the image on docker hub
+          registry: docker.io
+
+          # You will setup secrets in your GitHub repo, and then GitHub Actions will look for these
+          # secrets when running this build job.
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+  dependency-submission:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+
+      # Generates and submits a dependency graph, enabling Dependabot Alerts for all project dependencies.
+      # See: https://github.com/gradle/actions/blob/main/dependency-submission/README.md
+      - name: Generate and submit dependency graph
+        uses: gradle/actions/dependency-submission@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0

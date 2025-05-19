@@ -1,0 +1,9 @@
+[project]
+name="simple_api"
+version="0.1.0"
+dynamic=["version"]
+description="A simple api in FastAPI"
+requires-python=">=3.10"
+dependencies = [
+  "fastapi[standard]",
+]

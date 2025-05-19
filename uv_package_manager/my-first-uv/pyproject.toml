@@ -1,0 +1,33 @@
+[project]
+name = "my-first-uv"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+
+# Min version of python the project supports
+requires-python = ">=3.13"
+dependencies = [
+    "alembic>=1.15.1",
+    "fastapi>=0.115.11",
+    "sqlalchemy>=2.0.39",
+    "uvicorn>=0.34.0",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.9.10",
+    "httpx>=0.28.1",
+    "pytest>=8.3.5",
+]
+
+# You can specify the configurations of tools like "ruff" here in the pyproject.toml file.
+[tool.ruff.lint]
+extend-select = ["E", "W"]
+
+# Using the documentation for pytest we can see that we define our test path
+# like this. Now running uv pytest will run the tests in the tests.py file.
+[tool.pytest.ini_options]
+testpaths=["tests.py"]
+
+# Can add other configurations; here we run tests with less verbosity.
+addopts = "-q"

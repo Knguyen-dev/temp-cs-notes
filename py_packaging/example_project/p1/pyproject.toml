@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "my-package"
+version = "0.1.0"
+description = "A short description of your package"
+authors = [
+    { name = "Kevin Nguyen", email = "nguyekev@iu.edu" }
+]
+dependencies = [
+    "requests",
+    "numpy"
+]
+
+# List packages that are being included; so any subdirectories that have __init__.py within them.
+[tool.setuptools]
+packages = ["utils"]  
