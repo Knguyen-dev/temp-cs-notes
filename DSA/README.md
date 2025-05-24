@@ -1,0 +1,2 @@
+# Data Structures and Algorithms
+Notes I took for my data structures class, which I refined to be a little more detailed and organized. These were really helpful, I'm glad I took the class. Shoutout to Amyr Sabry our professor. Of course in the future these could be updated to contain code snippets, or corrections, or more detail. But for now it's pretty good.
