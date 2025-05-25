@@ -1,34 +1,38 @@
 # DNS (Domain Name System)
 
-### What is DNS
+### What is DNS and how does it work?
 We access websites through domain names like `nytimes.com`, however web browsers wokr with IP addresses. DNS translates domain names into IP addresses, allowing us to type in website names to travel to those sites. Remember a **domain name** is a unique easy to remember address to remember a website e.g. `google.com` or `facebook.com`. Each device has a unique IP address that others can use to find them. DNS servers remove the need for us to remember IP addresses, but now we can just type in the domain name that maps to that IP address.
 
-### How does DNS resolution work?
+1. Client types in `example.com` in a web browser and it travels through the internet to be received by a DNS resolver.
+2. Resolver recursively queries a DNS root nameserver. Root server responds the the address of a Top-Level-Domain (TLD).
+3. Resolver makes a request to the `.com` TLD. TLD server responds IP address of the domain's name server `example.com`.
+4. Resolver sends a query to the domain's nameserver, and receives the IP address for `example.com`.
+5. DNS resolver responds to the web browser with the IP address of the domain. The client should now be able to see the webpage.
+
+---
+### Server Types
 First we have four types of DNS servers involved in loading a webpage:
-- **DNS recursor:** Designed to receive quieries from client machines, then makes additional requests to find the domains. The librarian that looks for a book. This is like step 0, it initiates the process of the seasrch.
-- **Root nameserver (Root server)**: The index that points to different racks of books in the library. Itt points to different locations. Step 1 in the search proces.
-- **TLD nameserver:** A specific rack of books in a library. Step 2 in the search.
-- **Authoritative nameserver:** Dictionary on a rack of books. If it founds the requested "record" it'll return the IP address of that requested hostname back to the DNS recursor (librarian.) Last step in the search. 
+- **DNS Resolver (recursive resolver):** This is step one, it's the middleman between the client and the DNS nameserver. After receiving a DNS query it either uses cached data or makes requests. It can request the root nameserver, TLD nameserver, and then the authoritative nameserver. After it receives a request from the authoritative nameserver, the resolver sends a response to the client.
+- **Root nameserver (Root server)**: Accepts resolver's query and responds by directing them to a TLD nameserver. It does this based on the extension of the domain `.com`, `.net`, etc.
+- **TLD nameserver:** Maintains info for all domain names that share a common extension. The resolver gives a domain name, and the nameserver responds with an IP address.
+- **Authoritative nameserver:** The last step in the journey for an IP address. It contains specific info about the domain it serves. It'll respond with the IP address when the domain has a DNS A record. Or it can respond with a CNAME, causing the resolver to do a whole new DNS lookup.
 
-**Note:** If you're querying for a subdomain, there will be another nameserver after teh authoritative nameserver, which is responsible for storing the subdomain's record and therefore IP address.
+---
+### Query Types 
+- Recursive: DNS client needs a DNS server (typically the DNS recursive resolver) to get the information.
+- Iterative: DNS client gives the hostname and the DNS resolver returns the best answer it has.
+- Non-recursive: When DNS resolver already has the answer, due to a cache or it's sure of the DNS name server.
 
-#### Steps to how DNS works:
-1. User types `example.com`, which is received by recursive resolver.
-2. Resolver queries DNS root nameserver.
-3. Root server responds with a TLD DNS server, which stores info about the domains it has.
-4. Resolver queries the TLD, and TLD responds with the IP address of the domain name they wanted.
-5. Resolver quieries the domain's nameserver to get the IP. Then the resolver responds to the browser with the IP address.
+---
+### What DNS Record Are
+DNS records (zone files) are instructions that live in the authoritative DNS servers, and provide info about a domain including its IP. Records are just a series of text files written in DNS syntax.
 
-#### What is a DNS record?
-Whilst learning about DNS, you may hear about **DNS records**. These are instructions that live in authoritative DNS servers and provide info about a domain including the IP address associated with that domain. They consist of a series of text files written in "DNS syntax", which just tell the DNS server what to do. And yes all records have a TTL to indicate how often a DNS server should refresh that record, because maybe the info of that record has changed.
-
-
-### DNS Caching 
-The idea is that after we get an IP address associated with a domain name, let's cache it so that on future requests, we can deliver those IP addresses to other clients. This reduces the amount of times we need to go down the chain, and gives faster response times. The main form of this is browser-level DNS caching, as browsers cache the result for a set period of time.
-
-### DHCP 
-DHCP is a networking protocol for dynamically assigning IP addresses to each host on your organization network. So for a given network, DHCP makes sure all of those devices have an IP address. It also assigns DNS address.
-
+---
+### Explaining subdomains
+A subdomain is a additional part of our main domain name. You'd use this to logically separate your website into sections . For example, `blog.example.com`:
+- `blog` is the subdomain
+- `example` is the primary domain
+- `.com` is the top level domain.
 
 ## Credits
 - [What is DNS and how it works - Cloudflare](https://www.cloudflare.com/learning/dns/glossary/what-is-a-domain-name/)

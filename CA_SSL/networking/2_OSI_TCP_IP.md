@@ -1,14 +1,22 @@
+# OSI Model and the TCP/IP Model
 
-## OSI Model
+
 ### What is the OSI Model?
-An academic and conceptual framework that shows the various layers that are involved when sending data over a network. It's good in the academic sense and when working with others since it abstracts most of the complexities away.
-- **Application Layer:** Concerned with the app itself and how it communicates. For example, browsers and websites communicate with HTTPS and HTTP. Or maybe a mail server communicates with SMTP and mail protocols. In any case, your typical software applications will directly rely on this.
-- **Presentation Layer:** Preparing data to be used by the application layer. Concerned with the syntax of data and how it's sent and received. So like data could be sent as HTML, JSON, and CSV. This is where encoding occurs, compressing data to be sent, then decoding that data so that the client can use that data.
-- **Session Layer:** Maintains connections and is responsible for controlling ports and sessions. 
-- **Transport Layer:** Transmits data using transmission protocols including TCP and UDP. 
-- **Network Layer:** Related to routing, forwarding, and addressing across a network or multiple networks. Transmits data using transmission protocols including TCP and UDP. The idea of segmenting data (split into packets), routing those packets to the destination, and then reassembling those packets back into their original content.
-- **Data link Layer:** Defines the format of the data on the network. Technologies used to connect two machines across a network, where the physical layer already exists. We're data frames, digital signals encapsulated into packets. It's often split into two layers though:
-- **Physical Layer:** Refers to the physical wires and communication medium that the data goes through. This includes fiber-optic cables, copper cabling, and air (wireless). 
+A conceptual model that defines and shows the various layers that are involved in network communication. While it's not actually implemented in rela networks, it's good as it abstracts complexities away, making it easier for communication. It's composed of 7 layers:
+
+**Application:** Software applications like web browsers and email clients rely on this layer to do communication. It should be noted that client applications aren't a part of this layer, but rather this layer includes the protocols. Application layer protocols such as HTTP, SMTP, etc. TLDR your typical software applications use this to make stuff happen.
+
+**Presentation (aka Translation Layer):** Data from the application layer is extracted here is manipulated to fit the required format. So like data could be sent as HTML, JSON, and CSV. This is where encoding occurs, compressing data to be sent, then decoding that data so that the client can use that data.
+
+**Session:** For opening and closing communication between two devices. That time between the opened and closed state is known as the session. This layer makes sure the session/connection stays open long enough for all the data to be exchanged. Also closes session to avoid wasting resources.
+
+**Transport (Layer 4):** Responsible for end to end communication between two devices. It takes data from the session layer and breaking it into chunks (segments) before sending it to the **Network Layer (layer 3)**. So like TCP and UDP.
+
+**Network Layer (Layer 3):** Responsible for transferring data between two different entworks. It breaks up the segments from network 4 into smaller units called **packets** on the sender's end. It then reassembles packets on the receiving device. It's also responsible for finding the best physical path for this data to get from source to destination.
+
+**Data Link:** Similar to the network layer, but it helps sending data between two devices on the same network. This time it takes packets fro mteh network layer and further breaks them down into frames.
+
+**Physical:** The physical equipment involved in the data transfer, such as cables (e.g. fiber optics) and switches. Here the data is converted into a bit stream. Of course the devices must agree on a signal convention to distinguish between 1s and 0s.
 
 ### Practical Model: TCP/IP Model
 The OSI model is more educational due to its abstractions, but the TCP/IP model is more commonly used in practice. This model has five layers physical, data link, network, transport, and application. It's more detailed, which is good. TCP breaks data into segments, and hands it off to IP. IP sends those segments through the networks. Then the TCP module in the receiver, reassembles those segments in order to get the original message. TCP/IP contains more protocols at different layers. It starts with the application layer, which creates the message, and then sends it to lower layers which encapsulate the message sent by an upper layer. The piece of data has different names depending on what layer we're on:
