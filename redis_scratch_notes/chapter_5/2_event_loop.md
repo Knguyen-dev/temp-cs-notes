@@ -237,6 +237,22 @@ static void fd_set_nb(int fd) {
   }
 }
 
+/**
+ * Shift 32 to the left by 20 by 20 bits. This makes the thing 32 MB. You can easily calculate 
+ * this by doing 32 * 2^{20}. 
+ * 
+ * When a socket is created the OS creates a socket receive and socket send buffer for incoming and outgoing data.
+ * We've covered this, however the typical buffer sizes on many systems is about 64 KB to 512 KB, which is a lot less
+ * than 32 MB. So we'll be storing data from that OS buffer into our user-defined buffer, and our user-defined buffer is like 
+ * many times bigger.
+ * 
+ * The motivation behind making the max message size so big, is that we want the application to handle very large messages, even 
+ * if the kernel only able to at most give us a part of the message at a time. So the receive buffer could be fill, we send it to our 
+ * user-defined buffer, and maybe that has to happen a couple of times for the entire message to be received. It's a big indicator that 
+ * our application is ready to handle partial reads and writes.
+ */
+const size_t k_max_msg = 32 << 20;
+
 /*
 + try_one_request: Tries 1 request (tries to read one message, and send one response) if there's enough data. This function is used in `handle_read()` as a helper function. Anyways this function returns a boolean indicating whether this operation was successful.
 */

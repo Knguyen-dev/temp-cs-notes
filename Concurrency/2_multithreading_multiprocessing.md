@@ -27,6 +27,14 @@ In Python, only a single thread can run at a time period. Doesn't matter if they
 
   - **Deadlock:** Happens when two or more threads or processes (threads in this context) get stuck waiting on each other to release a resource, preventing further execution. Normally one thread is executing, it releases so that the core can work on another thread. 
 
+#### Example: How deadlocks can happen
+
+TODO: Also do one on how race conditions can happen, should define starvation as well.
+
+
+
+
+
 ### Takeaway 
 - When multiple processes are being used in parallel. So multiprocessing is key for executing multiple cpu intensive tasks that have little IO at the same time.
 - While multithreading is used for managing multiple IO heavy tasks.
@@ -35,3 +43,9 @@ In Python, only a single thread can run at a time period. Doesn't matter if they
 
 ## Creditss
 - [Multiprocessing vs Threading - Dave's Space](https://youtu.be/AZnGRKFUU0c?si=ejOCe10J08PEDXWN)
+
+
+
+
+I think this one is probably the most important out of all of them.
+- [freeCodeCamp Multithreading in Java](https://www.youtube.com/watch?v=gvQGKRlgop4)

@@ -18,7 +18,7 @@ Who cares about installing any of these tools and configuring all them to work w
 1. **Source:** The trigger of the event that starts the workflow, which is our CI/CD pipeline in this case. So this will be a push, pull request, or even a manual trigger.
 2. **Build:** Transform the source code into an executable or just its ready to run format. Like making the build files.
 3. **Test:** Run some automated tests on the code. This would be unit and integration tests, but also linting, static code checks, secret detection, and other security scanning stuff.
-4. **Package:** Bundle the build outputinto a "deployable artifact". This could be a `.jar`, `.zip`, a Docker image, or someother deployable file. In any case, you'd add metadata such as the version of your software, timestamp, etc.
+4. **Package:** Bundle the build output into a "deployable artifact". This could be a `.jar`, `.zip`, a Docker image, or someother deployable file. In any case, you'd add metadata such as the version of your software, timestamp, etc.
   1. **Artifact Store (Optional But Common):** It's common to store the packaged result in some kind of artifact repository. For example, you'd upload that docker image to Docker Hub. This lets you and others keep track of the latest releases of your software. You'd also tag/version the artifact.
 5. **Deploy:** Make the application available in an enivronment such as staging, QA, or production.
   1. **Post-deployment:** Have health checks, monitoring, and rollback if deployment fails.

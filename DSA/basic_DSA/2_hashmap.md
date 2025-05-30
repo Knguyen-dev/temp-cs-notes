@@ -38,6 +38,44 @@ This reduces clustering compared to linear probing.
 **Double Hashing**
 Uses a second hash function to jump around: $j = h_{1}(k) + i \cdot h_{2}(k) mod C$, where C is the size of the table and k is your key. This is really good at reducing clustering nad gives you a more uniform spread. Of course it's a little more computationally expensive.
 
+### Hashmap Example 1: Chaining
+```
+0       [ ]
+1       [ ]
+2       [ ]
+3       [ ("Bob", 25) → ("Ron", 40) ]   ← Collision handled by chaining
+4       [ ]
+5       [ ]
+6       [ ]
+7       [ ("Amy", 32) ]
+8       [ ]
+9       [ ]
+```
+Let's try to find amy. You'd do `find("Amy")` to be returned index 7. Then you'd iterate through the array in that slot, returning the result where `item[0] == "Amy"`, matching the keys. Then you return the value of that result which is `32`. This is more apparent because if hash "Bob" or "Ron" they both output index 3. To differentiate them, we need to have the key with them!
+
+
+### Hashmap Example 2: Linear Probing
+Assume we have a hash table with linear probing. Then let's say we do some operations:
+- put("Amy", 32) = 2, so we place the (key, value) tuple at index 2.
+- put("Bob", 25) = 5, do the same thing.
+- put("Ron", 40) = 5. 5 is already taken, so see if 6 is taken. It isn't, so put it at 6.
+```
+Index   Slots
+-------------------------
+0       [           ]
+1       [           ]
+2       [ "Amy":32  ]     ← Hashed here
+3       [           ]
+4       [           ]
+5       [ "Bob":25  ]     ← Hashed here
+6       [ "Ron":40  ]     ← Placed here due to collision
+7       [           ]
+8       [           ]
+9       [           ]
+```
+Now if you want to find the value for "Amy", you'd do `find("Amy")`, which returns index 2. We check the key stored at index 2 to make sure it's "Amy", and it is. Now just reutrn the value 32. However let's try to do this for Ron. Do `find("Ron")` which returns 5. We look at index 5, check the keys, at index 5 it's "Bob" not "Ron". So you look in the next place at index 6 to see the tuple ("Ron", 40). The keys match, so return the value 40. Again this illustrates the process and shows why we store key and value.
+
+
 ## TLDR
 That's about it. Of course, the experience is a lot different when learning theory and then implementing the real thing. I'll link my own implementation of a hashmap [here](https://github.iu.edu/CSCI-C343-Spring2025/nguyekev-submission/tree/main/A5)
 

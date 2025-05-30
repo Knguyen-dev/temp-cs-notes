@@ -12,6 +12,15 @@ You're going to probably use these packages:
 ### Event Loop
 A central hub that manages and executes tasks. Allowing multiple tasks to be executed, seemingly in parallel. A task goes into the event loop and it's executed immediately or hangs. If it hangs, then it still stays within the event loop, but another task will enter the loop to be worked on. Then once it stop hanging, then the event loop will work on it. Once all tasks are completed, the event loop will close.
 
+Everything runs in the main thread, no thread switching involved. Apparently here's how it works:
+1. Main code runs utnil it yields (returns or awaits something)
+2. Then the event loop takes control:
+  1. Checks if any IO is ready 
+  2. Runs the callbacks/coroutines on that data.
+3. These tasks run until they await something, and then the control goes back to the main main code.
+
+This is called cooperative multitasking, where tasks voluntarily give up control.
+
 ### Synchronous vs Asynchronous web servers
 - **WSGI:** It handles requests in a blocking manner, so one request per worker thread/process at a time. To handle multiple requests concurrently, the WSGI server spawns multiple worker threads, each capable of handling one request at a time. So if there were 15 requests made at the same time, it'd spawn 15 threads to handle the situation. Since each request blocks a wokrer, WSGI works best when handling CPU-bound tasks (e.g. database queries or calculations). However it struggles with long-lived connections (e.g. WebSockets, background tasks).
 - **ASGI:** It uses an event loop so that a single worker thread/process could handle multiple requests concurrently. If a request involves an async operation (e.g. database IO, external API call), where we'd be waiting, the server will work on another request whilst the former is still idle. This type supports WebSockets, background tasks, and the streaming of data.

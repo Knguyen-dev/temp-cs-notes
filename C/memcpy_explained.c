@@ -21,7 +21,13 @@ int example_1() {
   // to make sure we count the null terminator character.
   memcpy(dest, src, strlen(src) + 1);
 
-  // Output: Apple
+  // Output: Apple with null terminator character 
   printf("%s\n", dest);
+}
 
+int example_2() {
+  char str1 = "Tutorials";
+  char str2 = "Point";
+
+  // Copy the content of first_str to sec_str
 }
