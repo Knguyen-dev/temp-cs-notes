@@ -7,31 +7,28 @@
  * We're using hash tables with chaining, so this is a linked list node containing 
  * the next node if it exists.
  * 
+ * - hcode: A hashcode for the key associated with this node. Notice that the hashcode 
+ *  isn't the index position that the node is at in the hashtable. Let me explain to you the workflow:
  * 
- * - hcode: A hashcode for the key associated with this node. The plan is 
- * to store it and avoid the idea of re-calculating the hash. This 
- * speeds up lookups as hash values aren't changing.
+ * 1. Given a string, we can safely treat that string as a pointer to a buffer of 8-bit integers (char = 8bits) (sequence of bytes)
+ * 2. We can hash that sequence of bytes, which effectively hashes our string. This outputs our hashcode. 
+ * 3. We do bitwise AND with this entry's hash code and the hashtable's bit-mask, which yields the bucket index. 
  * 
- * This probably isn't the index, I'm guessing hashcode also differentiates entries 
- * in the case of collisions.
+ * Note: Hash codes aren't cryptographic, they aren't designed to be hard to crack because they don't need to be.
+ * They just need to be designed for speed. 
  */
 struct HNode {
   HNode *next = NULL; 
   uint64_t hcode = 0;
 };
 
-// 
-// 
 /*
 A simple fixed-size hashtable; Underlying supporting structure.
 - tab: Array of slots
-- mask: A bitmask used to map a hash code to a bucket index. h(hashCode) = hashCode & mask. The reason we aren't 
-using modulo is because bitwase AND is a lot faster. However this works only if the table size is a power of 2.
-
-For example, let size of the table N=8, then mask=2^{3}-1=7=0b111. So any hash code is mapped with hcode & 0b111, which is 
-a value between [0,7] for the indices, which should be valid. Just an efficient way of calculating the indices.
-
-- size: Number of entries in the hash table.
+- mask: Equals size-1. Remember that the valid indices would be in range [0, size-1] and this bitmask is used to do the hash function calculatiosn quickly. However this works only if the table size
+ is a power of 2. For example, let size of the table N=8, then mask=2^{3}-1=7=0b111. So any hash code is mapped with hcode & 0b111, which is a value between [0,7] for the indices, which
+ should be valid. Just an efficient way of calculating the indices. We'll also use mask+1 in our code to represent the current maximum capacity of our hashmap. 
+- size: Current Number of entries in the hash table.
 */
 struct HTab {
   HNode **tab = NULL;

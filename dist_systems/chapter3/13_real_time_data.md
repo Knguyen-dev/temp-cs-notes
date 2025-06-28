@@ -19,9 +19,7 @@ Client ← "Yes! AAPL is now $150" ← Server
 Client → "Any new stock prices?" → Server
 Client ← "Nope, same prices" ← Server
 ```
-It's useful when real-time updates aren't strictly necessary, so some delay in the event happening and the user perceiving it is acceptable. An example is checking if a lengthy server-side process (like file processing or data analysis) has finished. It probably doesn't have to be strictly real time, but periodic and intermittent checks are fine. 
-
-Though, short polling isn't efficient. It's really wasteful as there's most of the time you're using a lot of requests that aren't resulting in new data. Also you're increasing the server load with the amount of requests you're sending, and you can imagine how bad this can get if you're scaling this up to more users. 
+Though, short polling isn't efficient. It's really wasteful as there's most of the time you're using a lot of requests that aren't resulting in new data. Also you're increasing the server load with the amount of requests you're sending, and you can imagine how bad this can get if you're scaling this up to more users. In general, short polling is almost always a bad idea.
 
 ---
 ### Long Polling
@@ -35,7 +33,7 @@ Client ← "Yes! AAPL is now $150" ← Server
 Client → "Any new stock prices?" → Server
 [Server waits again...]
 ```
-A lot closer to real time than short polling. However maintaining a lot of persistent connections will cost more server resources. The much more modern alternative for real time data is websockets!
+A lot closer to real time than short polling. However maintaining a lot of persistent connections will cost more server resources. The much more modern alternative for real time data is websockets! In general, this is really useful and can scale up well.
 
 ---
 ### Why Not Polling in some real-time data use-cases?
@@ -101,9 +99,21 @@ Data is represented as a series of **frames**. Each frame as a specific structur
 Data for a large message is split up as fragments. So we have the gradual delivery of large amounts of data. 
 
 ## Server-Sent Events
+![](https://raw.githubusercontent.com/karanpratapsingh/portfolio/master/public/static/courses/system-design/chapter-III/long-polling-websockets-server-sent-events/server-sent-events.png)
+A way of establishing long-term communication betwee client and server that enables the server to proactively push data to the client. It's unidirectional, meaning the client sends one request, and can only receive responses from the server over the remainder of that connection. It can't make another request on that same connection.
 
-## Webhooks
+### How SSE Works
+Let's look at the workflow:
+1. The client makes a request to the server.
+2. The connection between client and server is established and it remains open.
+3. The server sends responses or events to the client when new data is available.
+
+### Considerations and Examples
+It's simple to implement, and widely supported by browsers. However, that unidirectional nature can be limiting in situations where you want to respond to the server.
+
+
 
 ## Credits:
 - [ByteMonk](https://www.youtube.com/watch?v=G0_e02DdH7I)
 - [WebSockets API - MDN Docs](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)
+- [Explaining short polling, long polling, and websockets](https://www.youtube.com/watch?v=ZBM28ZPlin8)

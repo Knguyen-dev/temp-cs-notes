@@ -14,7 +14,6 @@ static void h_init(HTab *htab, size_t n) {
   htab->size = 0;
 }
 
-
 /**
  * This inserts a node into the hashmap:
  * 1. Use precompute hash and mask to determine the index of the bucket.
@@ -31,37 +30,31 @@ static void h_insert(HTab *htab, HNode *node) {
 }
 
 /**
+ * Return parent pointer that points to the node.
+ * 
  * Parameters:
  * - htab: Underlying hash table data structure. This should exist.
  * - key: Hash node that represents the key. It contains the hashcode we'll use to get an index.
  * - eq: This is a pointer to a function that returns boolean after comparing two different hash node pointers.
  * 
- * 
- * Algorithm
- * 1. If the actaul table pointer isn't allocated, then early return.
- * 2. Calculate the index that the key relates to. 
- * 3. Get a pointer to the first node in the bucket
- *  - htab->tab[pos] is HNode*, a pointer to the first node in the linked list.
- *  - Then &htab->tab[pos] is a pointer to that pointer HNode **.
- *  - This allows our motivation to return not the node itself (HNode*), but a reference to the 
- *    node, so that the caller can access, modify, or even delete it later.
- * 4. Iterates through the list. cur should be a pointer to the current node which is de-referenced from "from"
- *    We update the *from pointer as we move on.
- *    - If the hashes of the current node and the node we're looking up match, we'll return a pointer that 
- *      pointers to the node that matches.
+ * Algorithm:
+ *  1. Get index associated with key.
+ *  2. Get a parent pointer to the head of the linked list; using double pointer makes traversal logic easier. 
+ *  3. Iterate through the linked list, only return our parent pointer, when the key of the current node matches
+ *     the inputted key. Parent pointer points to current node pointer so that works out.
  * 
  * Return:
  *  - It could be a pointer to `htab->tab[pos]`, the head of a list. 
  *  - It could be a pointer to cur->next, somewhere in the middle or tail.
  *  - Return when not found.
  * 
- * Note: Motivation to use a double pointer (HNode **from) 
+ * Note: Motivation to use a double pointer (parent pointer of the target node) (HNode **from) 
  * You'd use this because it allows your calling function to modify the pointer that points to HNode*. Demonstrate:
  *   a. HNode **from = &htab->tab[pos]; A pointer to HNode*
  *   b. for (HNode *cur; (cur = *from) != NULL; from = &cur->next); since we have a double pointer,
  *      we can update from to be a pointer to the next HNode*. If we didn't use a double pointer, we would 
  *      need to keep track of the previous node during traversal.
- *  
+
  */
 static HNode **h_lookup(HTab *htab, HNode *key, bool (*eq)(HNode *, HNode *)) {
   if (!htab->tab) {
@@ -81,11 +74,14 @@ static HNode **h_lookup(HTab *htab, HNode *key, bool (*eq)(HNode *, HNode *)) {
  * Removes a node from our hashtable. Specifically it removes the head node from a given linked list.
  * 
  * Algorithm:
- * 1. One level of de-reference since we want to access the node's data. 
- * 2. Update the head of the linked list to point at the node after the head; effectively removing entry.
- *   So now that inner HNode* points to a new memory.
- * 3. Decrement size of the hash table 
+ * 1. Deferrence to access node pointer
+ * 2. Update parent pointer to point to the next list in the chain. 
+ * 3. Decrement hash table's size and return the pointer of the removed ndoe
  * 
+ * Returns removed node
+ * 
+ * Note: This doesn't actually delete the node from memory. This function can be 
+ * used for moving stuff around.
  */
 static HNode *h_detach(HTab *htab, HNode **from) {
   HNode *node = *from;
@@ -94,16 +90,24 @@ static HNode *h_detach(HTab *htab, HNode **from) {
   return node;
 }
 
-
-
-const size_t k_rehashing_work = 128;
-
 /**
- * A helper function for progressive rehashing
+ * A helper function for progressive rehashing.
  * 
  * 
- * 
+ * Algorithm: 
+ * - nwork: Tracks how much "work" or rehashing we've done. The number of entries migrated. 
+ * - While we haven't reached rehashing limit and the old hashmap still has entries
+ *    1. Get a double pointer to a head of the linkedlist in the old map; 
+ *    2. If the actual node pointer is null, it's an empty slot so skip it and increase the index position
+ *    3. Move a node from the "older" hashtable bucket to the "newer" one. 
+ *    4. Increase the nwork value by 1 to indicate we moved one item.
+ *  
+ * Note: Double pointer is likely needed since insert or detach updates **from to be a pointer to the next node pointer.
+ * - If the older hashmap is defined and has zero keys, we're done with it:
+ *    1. Free the double pointer 
+ *    2. Make our older hash table point to a zero initialized HTab instance (C++) syntax.
  */
+const size_t k_rehashing_work = 128;
 static void hm_help_rehashing(HMap *hmap) {
   size_t nwork = 0;
   while (nwork < k_rehashing_work && hmap->older.size > 0) {
@@ -117,14 +121,23 @@ static void hm_help_rehashing(HMap *hmap) {
     h_insert(&hmap->newer, h_detach(&hmap->older, from));
     nwork++;
   }
-
-  // Discard the old table if we'er done migrating keys 
+  // Discard the old table if we're done migrating keys 
   if (hmap->older.size == 0 && hmap->older.tab) {
     free(hmap->older.tab);
     hmap->older = HTab{};
   }
 }
 
+/**
+ * Create new table for the hashmap and ensures older and new references are properly shifted and initialized.
+ * is a bigger table than table2. 
+ * 
+ * At this point, I'm assuming all entries are in our current newer hashtable.
+ * 1. Our current new table becomes the old table; 
+ * 2. Update the new table to point at a newly initialized hashtable.
+ * 3. hmap.newer.mask+1 (equivalent to the size of the hashmap) create a hashtable that's double the size.
+ * 4. Reset the migrate position index to prepare for progressive re-hashing
+ */
 static void hm_trigger_rehashing(HMap *hmap) {
   assert(hmap->older.tab == NULL);
   // (newer, older) <- (new_table, newer)
@@ -133,6 +146,18 @@ static void hm_trigger_rehashing(HMap *hmap) {
   hmap->migrate_pos = 0;
 }
 
+
+// **** Start creating the functions that actually going to be exposed by our API/Library ****
+
+/**
+ * Give a node with a given key, return a pointer to the HNode that matches that key. 
+ * 
+ * Algorithm: 
+ * 1. Start migrating entries (entire buckets)
+ * 2. Search the newer hashmap for the key-value pair
+ * 3. If we didn't find it, from the newer hashtable, then search the older for the key-value pair
+ * 4. If our parent pointer is defined, return a pointer to the node, else return null. 
+ */
 HNode *hm_lookup(HMap *hmap, HNode *key, bool (*eq)(HNode *, HNode *)) {
   hm_help_rehashing(hmap);
   HNode **from = h_lookup(&hmap->newer, key, eq);
@@ -142,8 +167,18 @@ HNode *hm_lookup(HMap *hmap, HNode *key, bool (*eq)(HNode *, HNode *)) {
   return from ? *from : NULL;
 }
 
+/**
+ * Inserts a node somewhere into the hashmap. 
+ * 
+ * Algorithm: 
+ * - If our newer hash table isn't defined, define it with a size of 4. 
+ * - Then insert into the newer table. We always want to insert into the newer table. 
+ * - If older table doesn't exist, compute a threshold:
+ *    1. Our threshold = size * max load factor; a common threshold, the load factor is really high actually usually it's around 0.75 in java
+ *    2. If the number of entries exceeds the threshold, trigger rehashing
+ * 
+ */
 const size_t k_max_load_factor = 8;
-
 void hm_insert(HMap *hmap, HNode *node) {
   if (!hmap->newer.tab) {
       h_init(&hmap->newer, 4);    // initialize it if empty
@@ -159,6 +194,14 @@ void hm_insert(HMap *hmap, HNode *node) {
   hm_help_rehashing(hmap);        // migrate some keys
 }
 
+/**
+ * Deletes a node associated with the key node in the hash map. 
+ * 
+ * 1. Migrate some keys.
+ * 2. Attempt to find key-value pair in the newer hash table. 
+ * 2. Attempt to find key-value pari in older hash table. 
+ * 3. At this point it wasn't in either tables, so return NULL. 
+ */
 HNode *hm_delete(HMap *hmap, HNode *key, bool (*eq)(HNode *, HNode *)) {
   hm_help_rehashing(hmap);
   if (HNode **from = h_lookup(&hmap->newer, key, eq)) {
@@ -170,12 +213,22 @@ HNode *hm_delete(HMap *hmap, HNode *key, bool (*eq)(HNode *, HNode *)) {
   return NULL;
 }
 
+/**
+ * Clear the hashmap by freeing the memory associated with the older and newer hashtables. 
+ * Also zeroes the memory of the entire hashmap pointer. 
+ * 
+ * Note: They're only freeing the memory of the HNode**, the parent pointers. Does that mean 
+ * that each HNode* is not dynamic memory? The only other time we use free is in hm_help_rehashing?
+ */
 void hm_clear(HMap *hmap) {
   free(hmap->newer.tab);
   free(hmap->older.tab);
   *hmap = HMap{};
 }
 
+/**
+ * Get the size of the hashmap by summing up the sizes of the older and newer hashtables.
+ */
 size_t hm_size(HMap *hmap) {
   return hmap->newer.size + hmap->older.size;
 }

@@ -99,10 +99,15 @@ static void handle_write(Connection *conn) {
 ```
 
 
-### Additional Exercise: Better buffer handling
+## Additional Exercise: Better buffer handling
 Currently with our buffer handling, we append to the back and remove from the front. We're using it like a FIFO data structure. We have a dynamic array meaning it resizes itself. 
+- Random access: $O(1)$
+- Insertion or removal from the end: Amortized constant $O(1)$. 
+- Insertion at the beginning or middle: Typically $O(n)$. Imagine you already have an array of data. If you're goint to insert a new element at the beginning or middle, you'd need to shift all elements to the right, and that's about $n$ elements. 
 
-With our dynamic array, appending to the back is efficient. However if we remove from the front, we're shifting all of those array slots, and that's very inefficient. That's the common thing with an array, so a better thing would be having a buffer that's efficient at both ends. The idea being removing from the front is just advancing a pointer:
+
+
+That's the common thing with an array, so a better thing would be having a buffer that's efficient at both ends. The idea being removing from the front is just advancing a pointer:
       ┌────────────┬────────────┬────────────┐
       │   unused   │    data    │   unused   │
       └────────────┴────────────┴────────────┘
@@ -120,11 +125,18 @@ struct Buffer {
   uint8_t *data_end;
 }
 
+static void buf_append(struct Buffer *buf, uint8_t bytes, size_t n) {
+  // ... 
+}
+
+static void buf_consume(struct Buffer *buf, size_t n) {
+  buf->data_begin += n;
+}
 ```
-- Just an extra thing though.
+
 
 ## TLDR Takeway
-- With pipelining, we can read multiple with one read operation. However this is out of the ordinary for the request-response protocol, so we would adjust a bit. 
+With pipelining, we can read multiple with one read operation. However this is out of the ordinary for the request-response protocol, so we would adjust a bit. 
 
 
 ## Credits 
