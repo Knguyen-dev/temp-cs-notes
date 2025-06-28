@@ -6,18 +6,23 @@ Ideally to make these concepts and ideas connect you should mention real life ex
 
 
 ### Chapter 3
-N-tier architecture
-Message Brokers
-Message Queues
-Publish-Subscribe
-Enterprise Service Bus (ESB)
-Monoliths and Microservices
-Event-Driven Architecture (EDA)
-Event Sourcing
-Command and Query Responsibility Segregation (CQRS)
-API Gateway
 REST, GraphQL, gRPC
 Long polling, WebSockets, Server-Sent Events (SSE)
+
+
+### TODO
+- consistent hashing:
+  - [Consistent Hashing - High Scalability](https://highscalability.com/consistent-hashing-algorithm/)
+  - [Consistent Hashing - Hello Interview](https://www.hellointerview.com/learn/system-design/deep-dives/consistent-hashing)
+- rate limiting 
+- service discovery
+- sla, slo, sli, etc.
+- disaster recovery
+- virtual machines and containers
+
+
+
+
 
 ### Chapter 4
 Geohashing and Quadtrees
@@ -31,6 +36,14 @@ OAuth 2.0 and OpenID Connect (OIDC)
 Single Sign-On (SSO)
 SSL, TLS, mTLS
 
+
+## Projects Folder
+Has notes rom example projects:
+- Url shortener 
+- Create a webhook
+- Create google docs
+
+Those above are my planned ones that I want to do.
 
 ## Credits 
 - [System Design GitHub Repo](https://github.com/karanpratapsingh/system-design)

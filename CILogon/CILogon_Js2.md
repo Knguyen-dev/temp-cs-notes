@@ -213,7 +213,7 @@ After registering for the first time, a user will need to get onboarded. This ju
 
 **complete_onboarding (`/api/user/onboard`)**
 1. Get access token from the user, if it doesn't exist, return a 401
-2. Verify the acess token is valid by hitting the CILogon userinfo endpoint. If it isn't then return a 401. 
+2. Verify the access token is valid by hitting the CILogon userinfo endpoint. If it isn't then return a 401. 
 3. Parse the user info, if the email isn't available, we return a 400 since all users should have an email.
 4. If the email from CILogon matches the email from the form data, then things look good so far, else reject the request.
 5. Update the user in our database to be onboarded, update their name and institution as well. Fail the request if the user isn't found, or if the we failed to update the user.
