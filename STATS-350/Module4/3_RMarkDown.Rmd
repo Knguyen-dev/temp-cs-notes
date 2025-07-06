@@ -1,0 +1,127 @@
+---
+title: "2_RMarkdown"
+author: "Kevin Nguyen"
+date: \today
+output: html_document
+
+---
+
+### What is RMarkDown and how to set it up
+
+Install the packages: 
+
+install.packages("rmarkdown")
+install.packages("tinytex")
+tinytex::install_tinytex()
+
+The idea is to compile these documents in html or PDF. The rmarkdown is the core one, and the tinytex allows us to do equations and whatnot. Every RMD has a header. To compile it and see it in its full glory, you need to do "Knit to html" on that toolbar or whatever thing you're using.
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+
+## Lists 
+For an unordered list use dashes "-" or asterisks:
+
+- First item
+- Second item
+- Third item
+
+For an ordered list, use numbers followed by a dot (also leave a line empty our list before starting):
+
+1. First
+2. Second
+2. Second and a half
+3. Third
+
+## Titles
+The number of hash symbols we use will affect the size of the title in each section.
+
+## Bold, italic, code font
+**Bold**
+***Italics***
+```C
+int* p = &x;
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+## Including R chunks
+R chunks are just blocks of R code. Here's how you make one:
+```{r}
+3+4
+a = 3
+b <- 5
+a+b
+```
+Only the variables that are created through R chunks, in your document, are going to be compiled with your document. So if you create a variable "d" in RStudio, it's in the global environment. If you use that variable to run an R chunk it'll work. However if you try to compile your R file, it will get an error that variable `d` wasn't found, because the Rmd compiler was expecting it to be defined in the R code in your `.Rmd` file. To avoid this happening, make sure you always define variables inside your `.Rmd` file. Arturo's recommendation is that everytime you start a new project, just make sure that your global environment is empty.
+
+Some R Chunk options:
+- echo: If true, we'll show the code used to generate something when outputting.  Else hide the code and only show the answer. You can also do something like `echo=-1` to say "Don't show the code associated with the first line", and you can generalize this of course. One last thing if you have multiple arguments for a given R chunk, separate them by commas.
+```{r, echo=TRUE}
+set.seed(1234)
+beta0 = 10
+beta1 = 4
+x = 1:20
+e = rnorm(20, mean=5,sd=3)
+e
+```
+- eval: When eval is false, we only show the code, your `.Rmd` won't show any output for that code. However if eval is equal to true, when you compile your file, it will run all the code in the file. You can evaluate certain lines like `eval=2`
+
+
+## Exercise
+Write an R chunk that creates there objects: X, Y, and Z, where X is the number 3, Y is a vector of two values, 10 and 20, and Z is a vector of two values, 5 and 10. By default it'll do this:
+- Show entire R chunk
+- Show the output of z
+- Show the line `y+z` and then show its output
+
+Now we'll include some settings:
+- echo=4: For all outputs, only show the code for the fourth line.
+- eval=-4: For all calculations, don't show the the calculation/result of the fourth line
+```{r, echo=4, eval=-4}
+x = 3
+y = c(10, 20)
+z = c(5, 10)
+z
+y+z
+```
+In the end we should only see line 4's source code and the output of line 5.
+
+## Working with math equations (Latex)
+I mean it's just working with latex. It's not that hard honestly.
+
+$\bar{x} = \frac{1}{n}\sum_{i=1}^{n}{x_{i}}=\frac{x_{1}+x_{2}+...+x_{n}}{n}$
+
+## Working with Images 
+I mean this is just regular mark down ![](./path/to/figure.jpg){width=50%}. 
+
+```{r, echo=FALSE, eval=4}
+a <- 3
+b <- 4
+a
+a+b
+```
+
+
+

@@ -1,0 +1,1137 @@
+---
+title: "Nguyen_Miderm_Review"
+author: "Kevin Nguyen"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+### Instructions 
+- For each module, review the quick check and problem set. For the problem set you should probably just review the solutions that he posts.
+- Cross reference to make sure you're ticking off boxes in the study guide
+- At the end try to do the extra problems. 
+- For the exam, you can either submit a `.R` or a `.Rmd` file that contains your answers, working, and  comments on your solutions.
+
+## Module 1: Intro to Probability
+
+### Quick Check 1: Math Preliminaries
+
+#### Question 1
+- S={All natural numbers}
+- F={1,2,3,5,8,13,21,34}
+- D={2,4,8,16,32}
+- A={odd numbers less than 24} = {x | x is odd and x < 24}
+
+1. $A^{c}$: x is even or x >= 24
+2. $F \cap A^{c} = \{ 2, 8, 34 \}$
+
+#### Question 2
+1. $A \cap F = \{ 1,3,5,13,21 \}$: 
+2. $A \cap F^{c}$= 7, 9, 11, 15, 17, 19, 23; Odds numbers that are less than 24, but they can't already be in F
+3. Union is {1,3,5,7,9,11,13,15,17,19,21,23}
+
+#### Question 3
+- S = set of all real numbers
+- A = Set of rational numbers
+- B= set of irrational numbers
+
+The set of irrational numbers is the biggest
+
+
+#### Question 4
+- S = set of all real numbers
+- A = {Rational numbers in S} = {2,3}
+- B = {Irrational numbers in S} = {sqrt(2), sqrt(3)}
+
+A and B contain the same number of elements in this case.
+
+
+#### Question 5
+There is a single computer for five students: Ava, Boris, Chloe, Dusting, and Esther. Only one student can use the computer at a time. If all five students have to use the computer in some order, how many configurations are possible?
+
+Since the problem cares about the order, the sequence in which they can use the computer, we can interpret this as a permutation problem:
+1. $nPr = \frac{n!}{(n-r)!} = \frac{5!}{(5-5)!} = 5!$
+2. $5*4*3*2*1 = 120$
+3. This works you need to arrange sequences of r-length out of a collection of 5.
+
+#### Question 6
+Ava, Boris, Chloe, Dusting, and Esther want to play table tennis, one-on-one. How many different pairs of players are possible?
+
+1. This doesn't seem like you're generating sequences, but rather pairs. This is likely a combinatorics problem where you're choosing from a collection of 5, and creating different combinations of 2.
+2. $C(n=5,r=2) = \frac{5!}{2!(3)!} = 10$
+
+
+
+### Quick Check 2: Intro to probability
+
+#### Question 1
+Based on the Kolmogorov probability model, we can obtain the probabillities for:
+- Events: We talk about probabilities for events rather than individual outcomes.
+- Sample Space: We can also get the probability of the sample space, which is always one.
+- The union of two events
+
+#### Question 2
+For any two events A and B, the probability of their union is equal to the sum of their probabilities; i.e. P(A∪B)=P(A)+P(B)
+
+1. This only works for events that are disjoint.
+
+#### Question 3
+If P(A)=0.7 and P(B)=0.5 then what is $P(A \cap B)+P(A^{c} \cap B)$?
+
+1. I'm assuming since we aren't given more information, that the events are independent and disjoint? As a result we can calculate the joint probability via multiplication and add the probabilities up for the union?
+2. $P(A \cap B) = P(A) \cdot P(B) = 0.7 \cdot 0.5 = 0.35$
+3. $P(A^{c}) = 1-P(A) = 0.3$
+4. $P(A^{c} \cap B) = P(A^{c}) \cdot P(B) = 0.30 \cdot 0.5 = 0.15$
+5. $0.35 + 0.15 = 0.5$
+
+#### Question 4
+If $P(A)=0.7$, $P(B)=0.4$, and $P(A^{c} \cap B)=0.1$. what is $P(A^{c} \cap B^{c})$?
+
+1. $P(B) = P(A \cap B) + P(A^{c} \cap B)$; marginalization
+2. $P(A \cap B) = P(B) - P(A^{c} \cap B) = 0.4 - 0.1 = 0.3$
+3. $P(A)=P(A \cap B) \cdot P(A \cap B^{c})$; Solve for $P(A \cap B^{c})$
+4. $P(A \cap B^{c}) = P(A) - P(A \cap B) = 0.7-0.3=0.4$
+5. $P(B^{c}) = P(A \cap B^{c} + P(A^{c} \cap B^{c}), P(A^{c} \cap B^{c}) = 0.2$
+
+#### Question 5
+Let's select numbers from the set S={2,3,4,5,6,7}. If I select two of these numbers without replacement. What's the probability that both numbers are not prime? Use three decimals.
+
+1. The only non-prime numbers are 4 and 6, only 2 out of the 6 numbers.
+2. We can say $\frac{2}{6} \cdot \frac{1}{5} = 0.066$
+
+
+### Quick Check 3: Conditional Probability and Independence
+
+#### Question 1
+A and B are both events with positive probabilities. Based on the relevant example you read, which of the following statements is true?
+
+1. Remember disjoint means $P(A \cap B)$ is nullset.
+2. If independent, then $P(A \cap B) = P(A) \cdot P(B)$
+3. So if they are disjoint, they can't be independent. 
+4. Final answer: "If A and B are disjoint, then they must be dependent"
+
+#### Question 2: 
+Which of the following statements is NOT true about independent events A and B?
+
+Multiple choice question
+- P(A|B)=P(B)
+- The occurrence of A is not affected by the occurrence of B.
+- P(A | B) = P(A)
+- P(A∩B)=P(A)∗P(B)
+
+The answer is $P(A|B) = P(B)$ is not true.
+
+#### Question 3
+A statistics class contains 35 students: 11 undergrads and 24 grad students. Of the undergraduates, 4 are female and 7 are male. Of the grad students, 5 are female and 19 are male. I randomly select a student from the class. What is the probability that the student is male?
+
+1. 7 male under grads + 19 male grads = 26 males.
+2. $\frac{26}{35}$
+
+
+#### Question 4
+A statistics class contains 35 students: 11 undergrads and 24 grad students. Of the undergraduates: 4 are female, and 7 and male. Of the grad students: 5 are female and 19 are male. I randomly select a student from the class. Given that the student I select is an undergraduate, what is the conditional probability that they are male?
+
+1. Narrow down to only undergrads. So 11
+2. $P(male | undergrad) = \frac{7}{11}$
+
+#### Question 5
+- $P(+ | D) = 0.62$: The probability of testing positive, given that they have the disease.
+- $P(- | D^{c}) = 0.82$: Probability of testing negative, given that you don't have the disease.
+- Bayes theorem refresher: $P(A|B) = \frac{P(A \cap B)}{P(B)} = \frac{P(B|A) \cdot P(A)}{P(B|A)P(A) + P(B|A^{c})P(A^{c})}$.
+
+
+a. Calculate the conditional probability of a false positive, which is testing positive but you don't have the disease $P(+ | D^{c})$. Then calculate the probability of a false negative ($P(-|D)$)
+
+
+1. $P(+|D^{c]}) = 1 - P(- |P(D^{c})) = 1-0.82 = 0.18$
+2. $P(-|D) = 1 - P(+|D) = 1-0.62=0.38$
+
+
+b. Let $P(D)=0.05$. Calculate $P(+)$. Then that you have the virus given a positive test result, so $P(D | +)$
+1. $P(+) = P(+|D)P(D) + P(+|D^{c})P(D^{c}) = 0.62 * 0.05 + 0.18 * 0.95 = 0.202$
+
+c. Given that the person tests positive, what's the probability of them having the disease? Denoted as $P(D|+) = ?$
+
+1. $P(D|+) = \frac{P(D \cap +)}{P(+)} = \frac{P(+|D)P(D)}{0.202} = \frac{0.62*0.05}{0.202} = 0.15$
+
+The takeaway is that you're simply using Bayes' theorem and marginalization in order to solve for unknowns.
+
+### Problem Set
+
+#### Question 1 
+In a world series, the first team to win 4 games will win the series. So a series must last at least four games and can't last more than 7. An outcome is a sequence indicating who won the each game, which we can determine to know who won the series `NNAAANN`
+
+a. How many world series outcomes are possible?
+  1. First let's just calculate the sequences where A wins.
+  2. A wins in 4 games: 1 outcome only `AAAA`
+  3. A wins in 5 games. We can assume that they win the last game. So out of the 4 games remaining, choose 3 to be when A wins. Note that this is a combination problem, you can even draw it out and think about it to verify. $C(n=4,r=3) = \frac{4!}{3!(1!)} = 4$
+  4. A wins in 6 games? Here you assume that they win the last game, so out of 5 remaining games, choose 3 where A is the winner. $C(n=5,r=3) =10$
+  5. A wins in 7 games? Here assume that they win the last game, so out of 6 remaining games, choose 3 where A is the winner. $C(n=6,r=3)=20$
+6. So you add up all combinations of wins for A 1+4+10+20=35$. Then you realize that you can do the same calculations for B, so you can reason B also has 35 different ways to win.
+
+b. How many outcomes are possible if the third game is won always have the American league?
+1. In 7th games: Fix A to the third slot. Let's say we have 7 games, so we need to find 3 more games within the remaining 6. That's 15. 
+2. To account for N wins, we need 4 Ns in 6 places, however one win is already accounted for $C(n=7,t=4$
+
+#### Question 2
+a. Pretty easy to draw the graph by hand
+b. F(y) = ...
+  1. 0, (-infty, 2)
+  2. 0.5, [2,3)
+  3. 1, [3, infty)
+
+#### Question 3 
+Consider the function $f(x)=2^{x}+1$
+
+a. $f(6) = 2^{6}+1$
+b. $f(-3)=2^{-3}+1$
+c. $f(\mathbb{R}) = (1, infty)$; it's asking for the range
+d. Finding the Inverse and calculating the answer:
+  1. $y=2^{x}+1$
+  2. $x = 2^{y}+1$
+  3. $ln(x-1) = yln(2)$
+  4. $f^{-1}(x) = y = \frac{ln(x-1)}{ln(2)}$
+  5. $f^{-1}(17) = 4$
+e. $f^{-1}(1.25)= -2$
+f. $f^{-1}([33/32, 33]) = [-5,5]$ 
+  
+Honestly it's easy. The only thing that'll trip you up is maybe if you forget how to find an inverse function, or if you forget that the notation in part C means that it's asking about the range of the function. 
+
+#### Question 4
+Toss a fair coin six times, so each possible outcome is considered equally likely. Find the probabilities for the following events:
+
+- Pretty much all of these questions are combination questions. Each outcome is a sequence of coins, but re-arranging doesn't matter in this case. I try to rationalize this because you're not arranging the outcomes in some order I guess.
+
+a. Exactly four coins show heads
+  1. $\frac{C(n=6,r=4)}{2^{6}} = \frac{15}{64}$; Think of it as, out of 6 coins, pick 4 to be heads.
+b. More heads than tails
+  1. This is when there are 4 or more heads.
+  2. $C(n=6, r=4) + C(n=6, r=5) + C(n=6, r=6) = 15+6+1$
+  3. \frac{22}{64}
+c. At least 3 tails
+  1. C(n=6,r=3) + ... + C(n=6, r=6) = 20 + 22 = 42
+  2. $\frac{42}{64}$
+d. $A^{c} \cup D$:
+  1. Not 4 heads, which is also not 2 tails. This unioned iwth at least 3 tails. So you can choose with regards to tails. If you're unioning, you need to watch out for duplicates. Add up 1 tail, 3 tails, 4 tails, 5 tails, and 6 tails. The first is handled by the set first, however the rest of them are handled by the second set. You can think of it like that
+  2. $64 - C(n=6,r=2) = 49$. So $\frac{49}{64}$. So here I just calculated all possible outcomes, and subtracted the outcomes that I didn't want. It makes sense, but it's probably intuitively better for people to add the combination equations.
+  
+e. More heads than tails UNION at least 3 tails.
+  1. When you have more heads than tails, we'll always have < 3 tails. Thinking about this, we're finding all outcomes where tails is between [0, 6]. That's literally every coin flip.
+  2. As a result, the probability is 1.
+  
+#### Question 5
+Let $P(A)=0.5, P(B)=0.8, P(A^{c} \cap B^{c})=0.2$
+
+a. Are A and B disjoint events?
+  1. $P(A \cup B) = 1 - P(A^{c} \cap B^{c}) = 0.8$; complement rule.
+  2. $P(A \cup B) = P(A) + P(B) - P(A \cap B)$; Solve for joint probabillity though.
+  3. $P(A \cap B) = 0.5$. 
+  4. A and B are only disjoint events when their joint probability is 0. However we just calculated that isn't true, so A and B can't be disjoint.
+b. $P(A \cap B^{c}) = ?$
+  1. $P(A) = P(A \cap B) + P(A \cap B^{c})$
+  2. $P(A \cap B^{c}) = P(A) - P(A \cap B) = 0.5-0.5=0$
+c. Are A and B independent? Is it possible?
+  1. $P(A \cap B) == P(A)P(B)$?
+  2. $0.5 != 0.5 * 0.8$. So they're not equal so they can't be independent.
+d. Calculate $P(A|B)=?$
+  1. $P(A|B) = \frac{P(A \cap B)}{P(B)} = \frac{0.5}{0.8} = 0.625$
+
+Is the conditional probability answer wrong?
+
+#### Question 6
+Draw 2 tickets with replacement from the urn $\{ 1,1,1,1,1,4,4,4,9,9 \}$. Let $Y$ be the random variable that assigns the sum of both tickets.
+
+a. Sample space (set of all possible outcomes):
+  1. {(1,1), (1,4), (1,9), (4,1), (4,4), (4,9), (9,1), (9,4), (9,9)}
+b. Range $Y(S)=?$
+  2. $Y(S)=\{ 2, 5, 8, 10, 13, 18 \}$
+c. $F(4\pi) = P(Y \leq 4\pi = 12.56) = ?$
+  1. For these types of problems, you're going to be summing up the probabillities of each range that's appropriate. You can reason that $P(Y \leq 4\pi) = P(Y=2) + P(Y=5) + P(Y=8) + P(Y=10)$. Then you calculate the probability for each, which is a lot simpler than you think.
+  
+  2. $P(Y = 2) = \frac{5}{10} \cdot \frac{5}{10} = 0.25$
+  3. $P(Y=5) = 0.5*0.3  + 0.3 * 0.5 = 0.30$
+  4. $P(Y=8) = 0.3 * 0.3=0.09$
+  5. $P(Y=10) = 0.5*0.2 + 0.2*0.5 = 0,2$
+  6. Then adding them all together gives you the result $F(4\pi)=0.84$
+  
+
+
+## Module 2: Random Variables Part 1
+
+### Quick Check 1: RScripts
+
+- In R your variables can be objects that store a number. Could store many numbers. Also variable names can't start with a number but can have numbers afterwards. 
+
+```{r}
+# This is how you create a vector
+vec1 = c(2,5,9)
+```
+Adding vectors in R will add the vectors component wise, which makes sense with regular math.
+
+### Quick Check 2: Discrete RV 
+
+#### Question 1
+If you're tossing three fair coins, to represent an individual outcome you'd use something like "HHH" or (H,T,T). 
+
+#### Question 2
+However if you were going to represent events, you'd use set notation. $\{ (HTT) \}$
+
+#### Question 3 
+We toss 3 fair coins and observe the sequence. The random variable $X$ assigns the number of heads to each outcome, e.g. $X(HXH)=2$. Now calculate $X(S)$ (the range of X):
+
+1. $X(S) = \{ 0, 1, 2, 3 \}$
+
+#### Question 4
+Toss 3 coins. The RV $X$ assigns the number of heads to each outcome. Assuming $f$ is the PMF of $X$, what is $f(0)?$
+
+1. $f(0) = P(X=0)$: The probability that the outcome is all tails.
+2. $\frac{1}{8}$
+
+#### Question 5
+Same situation, but now calculate $P(X \in [1,2.3])$
+
+
+1. $P(X \in [1,2.3]) = P(X = 1) + P(X = 2)$. You only consider valid discrete range values. $2.3$ is not discrete, but 2 is.
+2. $C(n=3, r=1) + C(n=3, r=2), = 3+3=6$
+3. $\frac{6}{8} = 0.75$
+4. I mean this also makes intuitive sense as you're excluding all tails or all heads (2 outcomes out of the total). 
+
+#### Question 6
+Same experiment, but we'll focus on $F$, which is the CDF of $X$. Calculate $F(\sqrt{2})$
+
+1. $F(\sqrt{2}) = P(X \leq \sqrt{2}) = P(X \in [0, 1])$
+2. Those are the entire discrete range values that this reaches. Now we can just do some combinatorics $C(n=3,r=0) + C(n=3, r=1)$ to represent 0 heads and only 1 head outcomes. This should be 4.
+3. $\frac{4}{8}$
+
+### Quick Check 3: Expected Value and Variance
+- urn: [1,1,1,1,1,3,3,3,7,7]
+- $X$: Random variable that assigns the sum of two tickets. Assume replacement.
+- What is the expected value of $X$?
+
+1. $E(X) = \sum_{i=1}^{n}{x_{i}f(x_{i})}$. So just sum up the products.
+
+2. $X(S) = \{ 2, 4, 8, 6, 10, 14 \}$
+  - $P(X=2) = 0.5*0.5= 0.25$
+  - $P(X=4)=0.5*0.3 + 0.3*0.5 = 0.3$
+  - $P(X=6)=0.3*0.3 = 0.09$
+  - $P(X=8)=0.5*0.2 + 0.2*0.5=0.2$
+  - $P(X=10) = 0.3*0.2  +0.2*0.3=0.12$
+  - $P(X=14)=0.2*0.2=0.04$
+  - Note: Here we calculated the probabilities of picking certain numbers from the urn. So for $P(X=4)$ we got the probability of picking (1,3) and (3,1).
+  
+3. Now that we have the probabilities for the pmf, we'll multiply those with the $X_{i}$ values. 
+  - 2*0.25=0.5
+  - 4*0.3=1.2
+  - 6*0.09=0.54
+  - 8*0.2=1.6
+  - 10*0.12=1.2
+  - 14*0.04=0.56
+  - Expected value: 5.6
+  
+#### Question 2 and 3
+Same situation, but calculate the variance. 
+1. $\sigma^{2} = \sum_{i=1}^{n}{(x_{1}-\mu)^{2}f(x_{i})}$
+  - $(2-5.6)^{2}(0.25) = 3.24$
+  - $(4-5.6)^{2}(0.30) = 0.768$
+  - $(6-5.6)^{2}(0.09) = 0.0144$
+  - $(8-5.6)^{2}(0.20) = 1.152$
+  - $(10-5.6)^{2}(0.12) = 2.3232$
+  - $(14-5.6)^{2}(0.04) = 2.8224$
+  - Sum it to get $\sigma^{2}=10.32$
+2. $\sigma = 3.21$
+
+#### Question 4, 5, 6, and 7
+- $E(X) = 4, Var(X)=10$
+- Let $E(Z) = 0, Var(Z)=1$
+- Calculate $E(X+4Z)$ and $Var(X+4Z)$ and $E(X-Z)$
+
+1. $E(X+4Z)=E(X)+E(4Z) = E(X) + 4E(Z) = 4+4(0)=4$
+2. $Var(X+4Z) = Var(X)+Var(4Z)= Var(X)+ 4^{2}Var(Z) = 10+16(1)=26$
+3. $E(X-Z)= E(X)-E(Z)=4-0=4$
+4. $Var(X-Z)=Var(X+Z)=Var(X)+Var(Z)=10+1=11$
+
+
+### Quick Check 4: Binomial Distribution
+
+
+#### Question 1
+You invite 50 friends to your birthday party and we assume that (i) friends don't influence each other and (ii) each friend has the same chance to attend. There is a 0.8 chance that any given friend will attend the party. 
+
+Let $W$ be a random variable that represents the number of friends who attend the party, what is $W(S)$?
+
+1. Each person is a random variable $X_{i}$ that follows a bernoulli distribution. They either go or don't. So that's $n=50$ trials. Then you can reason that each trial has a fixed probability and are independent from each other. As a result, this is binomial
+
+2. $W(S)= \{0, 1, 2, ..., 50\}$. We can get from 0 to 50 people coming to the party. Remember the range is a set, not an interval.
+
+#### Question 2
+Same situation, but what is a valid distribution of D?
+
+1. It's a binomial distribution with parameters $n=50$ and $p=0.8$
+
+#### Question 3
+How many friends do you expect to attend the party?
+
+1. Essentially you're finding the expected value of the binomial distribution.
+2. $E(X) = np = 50(0.8)=40$ for a binomial distribution.
+
+
+#### Question 4
+What is the variance of $W$?
+
+1. The variance of a binomial distribution is given by $\sigma^{2} = np(1-p)=50(0.8)(0.2) = 8$
+
+#### Question 5 and 6
+a. What is the probability that exactly 39 friends attend?
+
+```{r}
+dbinom(x=39, size=50, prob=0.8) # 0.127
+
+```
+This is equivalent to $f(39)=P(Y=39)$
+
+b. What's the probability of at least 42 people coming? 
+
+  1. This is denoted as $P(X \geq 42)$
+```{r}
+
+
+pbinom(q=42, size=50, prob=0.8)
+
+
+
+```
+
+### Quick Check 5: Continuous Random Variables
+
+#### Question 1 
+Let $X$ be a random variable and $x$ be a random variable.
+
+- If $P(X=x) = 0$, it is still possible realistically. But it's just what it is.
+
+#### Question 2
+Let $X$ be a cont. RV and $f(x)$ is given by:
+  - 2k, [0,3)
+  - k, [4, 8)
+  - 0, otherwise
+Calculate the value of $k$ S.T. $f(x)$ is the PDF of $X$. Remember for this to be a PDF, the area under the curve needs to equal 1.
+
+1. You'll need to graph and calculate the areas. Do the total area is $2k(3)+4k=1$, then you calculate $k=0.1$
+
+#### Question 3 
+Calculate $P(X < 2)=?$
+
+1. 2k(2) = 4k. Plug in k=0.1, you get an area of 0.4 
+
+#### Question 4
+Same function from question 2, but find $P(X=2)$?
+
+1. P(X=2) is zero. The probability of equaling something exact for a continuous RV is 0.
+
+#### Question 5
+Find the expected value of X?
+
+1. For a continuous random variable, to find the expected value, we do a summation of each midpoint multiplied by the area of the block associated with that midpoint.
+
+2. $E(X) = 1.5(0.2)(3)+6(0.1)(4)=3.3$
+
+
+
+
+
+
+
+
+### Problem Set
+
+#### Question 1
+Toss five fair coins. Let $X$ be the random variable that assigns the number of heads, if there are more heads than tails, and assigns zero otherwise. Determine each of the following:
+
+**Note:** If there are less heads than tails, you'd assign 0. The reading is the hardest part lmao.
+
+You can actually use R to help you answer some of these equations. 
+
+```{r}
+
+choose(n=5, k=2)
+
+```
+
+
+  
+#### Question 2
+For this question, you'd do the same thing as a normal urn problem, except you pick without replacement. That just changes up the calculations a bit, but it isn't that bad.
+
+
+#### Question 3
+- p=0.2
+- num trials = 25
+
+a. Expected value is np = 0.2(25) =5
+b. $P(Y > 7) = 1 - P(Y \leq 7) = 1-pbinom(q=7, size=25, prob=0.2)$
+c. What's the probability that out of 20 people, at least one of them is marked with ESP?
+
+```{r}
+
+# Prob that a given person has ESP
+prob_esp = 1-pbinom(q=7,size=25, prob=0.2) # 0.109
+
+# Probabillity all 20 don't have esp 
+prob_no_one_esp = (1-prob_esp)^{20} # 0.099
+
+
+# probabillity at least 1 has esp = 1 - probability no one has esp
+prob_at_least_1 = 1-prob_no_one_esp
+prob_at_least_1
+
+```
+
+
+#### Question 4
+Let's have 8 independent bernoulli trials (8 RVs) with parameter p=0.6 and $Y=\sum_{i=1}^{n}{X_{i}}$
+
+a. $E(X_{1}) =?$
+  - The mean of a bernoulli trial $E(X) = p$. So the expected value of the trial $E(X_{1}) = 0.6$
+
+b. $Var(X_{1}) = ?$
+  - The variance of a bernoulli trial is $Var(X)=p(1-p)=0.6(0.4) = 0.24$
+  
+c. $Var(X_{1}-2X_{2})=Var(X_{1})+4Var(X_{2}) = 0.24+4(0.24) = 1.2$
+
+d. $P(Y > 6)=?$
+  - Okay now we're handling the binomial aspect of this.
+  - $P(Y>6) = 1- P(Y \leq 6)$; do calc in R
+
+```{r}
+1- pbinom(q=6, size=8, prob=0.6) # 0.106
+```
+
+e. $E(Y)=?$
+  - Expected value of binomial distribution $E(Y)=np=8(0.6) = 4.8$
+  
+f. $Var(Y)=?$
+  - Variance of a binomial distribution $np(1-p)=8(0.6)(0.4) = 1.92$
+
+
+#### Question 5
+
+a, Find k so that it's a pdf:
+  - 3k(4) + 8k = 20k = 1, k = 0.05
+b. Do some calculations:
+  - $P(0 < X < 4) = P(0 \leq X \leq 4) = 4(3k)=12k=12(0.05)=0.60$
+  - $P(X=4) = 0$; A probability for an exact value is 0 when you're dealing with a continuous variable.
+  - $P(6 < X < 10) = 4(k) = 4(0.05) = 0.20$
+  - $P(2 \leq X \leq 10) = 2(3)(0.05) + 6(0.05) = 0.30+0.30=0.6$
+
+c. Calculate some more CDF values:
+  - $F(2)=P(X \leq 2)= 2(3)(0.05)=0.3$ 
+  - $F(\pi)=P(X \leq \pi)=\pi \cdot 3(0.05)=0.471$
+  - $F(10) = 4(3)(0.05) + 6(0.05) = 0.90$
+
+d. $E(X)=?$
+  - The expected value for a continuous random variable can be calculated by multiplying the midpoints of each rectangle with the area for said variable. So first let's list out the midpoints and areas before we do the calculations.
+  - $P_{1}=2, A_{1}=(3 * 0.05)(4)=0.6$
+  - $P_{2}=8, A_{2}=(8*0.05)=0.40$
+  - $E(X) = 2(0.6)+8(0.4)=4.4$
+
+  - I recommend doing this on hand first with a graph to make sure you have the right answer first. You don't want to make a mistake on something like this.
+  
+#### Question 6
+Question 6 is pretty hard, so I'll do it last.
+
+
+
+
+## Module 3: Random Variables Part 2 
+
+### Quick Check 1: Normal Distribution
+
+#### Question 1
+Let $Y ~ Norma(5,4)$, calculate $P(Y < 7)$
+
+1. To do normal distribution calculations, we can use R's pnorm function
+```{r}
+pnorm(q=7, mean=5, sd=2)
+```
+ 
+#### Question 2
+Let $Z ~ Normal(0,1)$, calculate $P(-2 < Y < 2)$. 
+
+1. You're calculating the value of some middle area of course. So geometrically, you'd just do something like $P(Y < 2) - P(Y< -2)$
+
+```{r}
+
+p1 = pnorm(q=2, mean=0, sd=1)
+p2 = pnorm(q=-2, mean=0, sd=1)
+
+p1-p2 # 0.9544
+# This aligns with the empirical rule.
+
+```
+
+#### Question 3
+Let X∼Normal(6,1) and Y∼Normal(5,4) be two independent random variables. Let D=X−Y. What is the variance of D? Answer with two decimals.
+
+1. We can just use those properties of variance we learned from a module ago $Var(D) = Var(X-Y) = Var(X)+Var(Y)=1+4=5$
+
+
+#### Question 4
+Let X∼Normal(6,1) and Y=3+X/2. What is the variance of Y? Answer with two decimals.
+
+- **Note:** Remember it's $X~Normal(mean, variance)$
+
+
+1. $Var(Y) = Var(3+\frac{X}{2}) = Var(\frac{X}{2}) = (\frac{1}{2})^{2}Var(X) = 0.25(1) = 0.25$
+2. Again variance doesn't care about adding a constant. Multiplying changes variance though.
+
+#### Question 5
+Let X∼Normal(6,1) and Y∼Normal(5,4) be two independent random variables. Let D=X−Y. What is  P(X>Y)? Answer with 2 decimals.
+
+  1. You can also think of this as $P(X-Y > 0)$ or the $P(D > 0)$. That's why they added that extra random variable, we want to think of the new distribution differently.
+  
+  
+  2. $Var(D) = Var(X-Y) = Var(X+Y) = Var(X)+Var(Y)= 5$
+  3. $E(D) = E(X-Y) = E(X) - E(Y) = 1$. Okay now we have the mean and variance of our resulting normal distribution. Now we just calculate the probability of the continuous random variable being positive using R.
+  
+```{r}
+
+# P(D > 0) = 1 - P(D <= 0)
+1 - pnorm(q=0, mean=1, sqrt(5)) # 0.672
+
+
+```
+  
+#### Question 6
+Let $X∼Normal(\mu=6,\sigma^{2} = 1)$ and Y=3+X/2. What is P(Y>7)? Answer with two decimals.
+  
+  1. Another distribution question where we calculate the expected value and variance of the new distribution, and use R to calculation the normal probability.
+  
+  2. $Var(Y) = Var(3+\frac{x}{2}) = 0.25Var(X)= 0.25$
+  3. $E(Y) = E(3+\frac{x}{2}) = 3 + 0.5E(X) = 3 + 0.5(6) = 6$
+  
+```{r}
+# P(Y > 7) = 1 - P(Y <= 7)
+
+1 - pnorm(q=7, mean=6, sqrt(0.25))
+
+
+
+```
+  
+### Quick Check 3: Quantiles and Population Attributes
+  
+#### Question 1
+Let $X$ be a discrete RV with pmf:
+  - 0.3, x=3
+  - 0.5, x=5,
+  - 0.2, x=20
+  - 0, otherwise.
+
+Now find the 0.6-quantile of $X$. 
+  1. Finding the alpha-quantile of a continuous random variable is pretty easy. Remember the quantile is the x-value point S.T. the interval $(-\infty, k]$ encloses an area of $\alpha$.
+  2. However we have to meet separate conditions for this:
+    - $P(X < k) = \alpha$;
+    - $P(X > k) = (1 -\alpha)$
+  3. So here we need to find a discrete X value S.T.:
+    - First condition: $P(X < 9) \leq 0.6$ 
+    - Second condition: $P(X > 9) \leq 0.4$
+  4. Let's try $k=3$ for the quantile:
+    - First condition: $P(X < 3) = 0.3$. But is $P(X<3) \leq \alpha=0.6$? Yes it does.  
+    - Second Condition: $P(X > 3) = P(X = 5) + P(X=20) 0.7$. Is that less than $1-\alpha = 1- 0.6=0.4$?. No not yet. Let's try again.
+    
+  5. Try k=5 for the quantile, see what happens: 
+    - First condition: $P(X < 5) = 0.3$. This is less than our alpha value, so that works.
+    - Second condition: $P(X > 5) = 0.2$. However is $P(X > 5) \leq 1-\alpha = 0.4$? Yes it is. So this works
+  
+  
+#### Question 2
+Same thing, find the 0.7 quantile of pmf:
+  - 0.3, x=1
+  - 0.4, x=10
+  - 0.3, x=100
+  
+  1.  For k=2
+    - P(x < 2) <= 0.7?
+    - P(x > 2) <= 1-0.7?
+  2. Finding out we realize P(x<2) = 0.3 which passes. Bu tP(x>2)=0.7 which doesn't pass. You'll intuit that x=4,8 would be the same.
+  
+  3. For k=16
+    - P(X < 16) <= 0.7? The probability results in 0.7, which works.
+    - P(X > 16) <= 0.3? The probability results in 0.3, matching our rule exactly.
+  4. This passes. You realize that x=32,64 are the same as well.
+  
+#### Question 3
+Let X be a continuous function with pdf:
+  - k, [1,3)
+  - 2k, [3, 7)
+  
+  Find the 0.8-quantile of X.
+  
+    1. First find the k value that makes this a pdf. You can do calculation $2(k) + 4(2k) = 1$ which is the area formula of the PDF.
+    2. For this to work k=0.1
+    3. Now we need to find a q value such that the area is 0.8. 
+    4. $2(0.1)+(q-3)(0.2) = 0.8$, where q=6.
+    5. Here we did the area of the first and then the area of the second triangle. The most important part of this is making sure you're correctly measuring the length and width.
+    
+#### Question 4
+Let X be a continuous function with pdf:
+  - k, [1,3)
+  - 2k, [3, 7)
+
+Calculate the mean and median (0.5-quantile): 
+  1. The trick used to calculate the expected value for a continuous random variable is to get the midpoint of its rectangle and multiply that midpoint by the area of that rectangle. We get $2(0.2)+5(0.8)=4.4$
+  2. The median can be calculated by setting up thethe equation 2(0.1) + (q-3)(0.2) = 4.5
+  
+  
+#### Question 5
+Let Y∼Normal(10,9). What is the IQR of Y? Answer with 2 decimals.
+
+```{r}
+# iqr=q3-q1. R has a solution for this
+
+
+q3 = qnorm(p=0.75,mean=10,sd=3)
+q1 = qnorm(p=0.25,mean=10,sd=3)
+
+q3-q1
+
+```
+### Quick Check 4
+  
+
+#### Question 2
+For a random variable X, the absolute deviation can we represented by the function $J_{1}(c) = E|X-c|$. What is the value of C that minimizes $J_{1}$?
+
+1. Just look in your notes, but the value should be $c=q_{2}$, the median.
+  
+#### Question 3 
+Same idea but now the function is $J_{2}(c) =E(X-c)^{2}$. What is the value of c that minimizes the function?
+
+1. Again in the notebook, it should be the expected value, which is just the mean.
+  
+#### Question 4
+If $X$ follows a normal distribution, what's the ration between the IQR and standard deviation?
+
+1. Quite the theoretical question. However I don't think we have to make it so theoretical. 
+
+```{r}
+# Just model X~Normal(0, 1)
+q3 = qnorm(p=0.75, mean=0, sd=1)
+q1 = qnorm(p=0.25, mean=0, sd=1)
+iqr = q3-q1
+
+ratio = iqr / 1
+
+ratio # 1.34
+
+```
+
+
+#### Question 5, 6, 7, and 8
+If X is normal, the mean is greater than the median?
+
+1. Well the mean leans towards the direction of skew. In this case there's no skew, so they're probably equal?
+
+If X is left skewed, the mean is smaller than the median?
+1. If skewed left, the mean is on the left/lower side. So this is probably ture.
+
+If they're equal, the random variable is always symmetric?
+1. No I can think of the case where's it's similar, but one side is up and the other is down. In that case, the things are probably equal, but we aren't symmetric.
+
+If the standard deviation is zero, iqr is also zero:
+1. If your standard deviation is zero, the data points are all on one x-value. The quartiles should be equal so iqr is 0.
+
+
+### Quick Check: Plug-in Principle
+This quick check is definitely going to use a lot more RScripts and code. Again with "plug in", We plug in our calculations as if they were the true mean. This is biased and has something to maximum likelihood estimators. However this is what we get when we treat our data as an empirical distribution (where each sample point has mass 1/n).
+
+- We have a set of n values, our sample, and we want to sue this sample to make inferences about the population. 
+- Use this sample as an empirical distribution, which means each $x_{i}$ has the same probability $\frac{1}{n}$. So the pmf $\hat{f}(x_{i]}) = \frac{1}{n}$.
+- "if you want to estimate a property of the population distribution, but don't know the population distribution, just 'plug-in' the values of your sample into general formulas 
+
+- For example, the variance of a distribution is $Var(X) = E(X-\mu)^{2}$. However since I don't know hte population distribution, I don't have the population mean. So instead of $\mu$ I will use $\bar{x}$. Then instead of $E$, I use the average over the sample (1/n). The plugin variance could be $\hat{\sigma^{2}}=\frac{1}{n}\sum_{i=1}^{n}{(x_{i}-\bar{x})^{2}}$.
+
+a Find the plugin estimate of the population mean
+b Find the plugin estimate of the population variance. 
+c Find the plugin estimate for the population standard deviation.
+d Find the plugin estimate of the population median
+e Find the plug-in estimate for the IQR.
+f Calculate the 5-number summary
+g Calculate specific quantiles (`quantile`)
+h Find the empirical CDF
+```{r}
+data <- c(2, 6, 8, 4, 10, 6, 4, 6, 3, 4, 2, 3, 5, 5, 8, 3, 6, 5, 1, 6)
+
+# a. You could also use mean(x) to get the same result
+# But I like this one since it follows the math summation.
+n <- length(data)
+fx <- rep(1/n, n) # pmf function for the empirical dist. 
+muhat <- sum(data*fx) 
+n
+fx
+muhat # 4.85
+
+
+# b. Another math formula 
+# NOTE: This is using the definition of variance for 
+# a discrete random variable! The formula is different 
+# for a continuous random variable. Though he never disc
+# -ussed examples.
+sigma2hat = sum((data-muhat)^2 * fx) # 
+
+sigma2hat # 4.8275
+
+# c. 
+# Note: You can't do var(data) to get teh plug-in varaince. That function actually calculates the sample variance which is a slightly different equation that divides by n-1, instead of n
+# 
+sigmahat = sqrt(sigma2hat)
+
+# d. You should note that the sample quartiles should  
+# be the same as the plug-in quartiles.
+median(data)
+
+
+# 3.The answer is literally 3, and here's two ways to do things
+IQR(data)
+quantile(x=data, prob=0.75) - quantile(x=data, prob=0.25)
+
+
+```
+
+### Quick Check: Plots in R
+Okay there are some main things to remember: 
+  - data_vector <- scan()
+
+Then there's also plots:
+  - hist(data_vector, frequency): Plots a histogram, and the frequency buckets are optional.
+  - boxplot(data_vector) 
+  - Normal Probability Plots (QQ-Plots): Using qqnorm() and qqline(), we can generate normal probability plots, also called quantile-to-quantile plots. If the plot here is a straight line, you can say that the real distribution is normal.0000
+  - Kernel Density Plots: Achieved with plot(densityy(data_vector)). Think of it as a smoothed out histogram, and so you have a nice probability distribution that looks continuous in nature.
+
+#### Question 1 
+1. Only 5 outliers. Outliers on a boxplot are just separate dots.
+2. The IQR is calculated using the q3-q1, which are just the two borders on the box-plot rectangle. $q3=5.8, q1=5$. Then $IQR=q3-q1=0.8$
+3. It's likely left-skewed and different from a normal distribution. Most of  the rectangle's area is on the left side.
+4. Let's see a normal probability plot or QQ-plot:
+```{r}
+data <- scan("https://mtrosset.pages.iu.edu/StatInfeR/Data/sample774.dat")
+plot(density(data, bw=10))
+
+qqnorm(data)
+qqline(data)
+```
+
+
+7. Create a normal probability plot and QQ plot 
+```{r}
+# I recommend running this in a separate R script as that's when things work out.
+x <- scan("https://mtrosset.pages.iu.edu/StatInfeR/Data/sample774.dat")
+y <- log(x)
+qqnorm(y)
+qqline(y)
+```
+
+### Problem Set
+
+#### Question 1
+Suppose that $X_{1} ~ Normal(\mu=2, \sigma^{2}=9)$ and $X_{2}~Normal(4, 25)$ are independent. Calculate the following:
+  a. $P(X < -1)$
+```{r} 
+pnorm(q=-1, mean=2, sd=3) # 0.158
+```
+    
+  b. $P(|X_{1} + 3| < 2)$; less so it's an and expression
+  1. $X_{1}+3<2$ or $X_{1}+3 > -2$
+  2. $X_{1} < -1$ or $X_{1} > -5$
+  3. P(-5 < X_{1} < -1) = $P(X_{1} \leq -1) - P(X_{1} \leq -5)$
+  
+```{r}
+pnorm(q=-1,mean=2,sd=3) - pnorm(q=-5, mean=2, sd=3) # 0.1488
+
+
+```
+  
+    
+  c. $P(|X_{1}-1|>2)$
+  1. > so it's an OR expression, so we're adding the probabilities.
+  2. $P(X_{1} < -1) + P(X_{1}>3) = P(X_{1} \leq 1) + (1-P(X \leq 3))$
+```{r}
+
+# Calculate x less than -1
+p1 = pnorm(q=-1, mean=2, sd=3)
+p2 = 1 - pnorm(q=3, mean=2, sd=3) # 0.5280
+```
+  d. Mean and variance of $2X_{1}$
+    1. $E(2X_{1}) = 2E(X_{1}) = 2(2) = 4$
+    2. $Var(2X_{1}) = 2^{2}Var(X_{1})=4 * 9 = 36$
+  e. Mean and variance of $2X_{1} - 2X_{2}$
+    1. $E(2X_{1} - 2X_{2}) = E(2X_{1}) - E(2X_{2}) = 2E(X_{1}) - 2E(X_{2}) = 2(2) + 2(4) = 10$
+    2. $Var(2X_{1} - 2X_{2}) = 4Var(X_{1})+4Var(X_{2}) = 36 + 100 = 136$ 
+    
+#### Question 2
+- The height of men is $X_{M} = 69.6$ inches and $\sigma_{M} = 2.8$ inches. - The height of women is $X_{F} = 63.7$ inches and $\sigma_{F} = 2.7$ inches.
+
+a. What's the probability that the woman is over five feet six inches 5'6", which is 66 inches.
+  1. $P(X_{F} > 66) = 1 - P(X_{F} \leq 66)$
+```{r}
+
+1 - pnorm(q=66, mean=63.7, sd=2.7) # 0.197
+
+```
+
+b. Let $D = X_{M} - X_{F}$ is a normal random variable. Calculate the expected value and variance.
+  1. Subtracted expected values to get $E(D) = 5.9$ inches. Variance is $Var(D) = Var(X_{M}-X_{F}) = Var(X_{M}+X_{F}) = Var(X_{M}) + Var(X_{F}) = $
+  2.  $2.8^{2}+2.7^{2}=15.13$
+```{r}
+
+2.8^2 + 2.7^2
+
+
+```
+c. The probability that a random man is shorter than a random woman can be represented by $P(X - Y= D< 0). We already have the expected value and variance of this distribution, so we can use an R calculation to do this:
+```{r}
+pnorm(q=0, mean=5.9, sd=sqrt(15.13)) # 0.064
+```
+
+#### Question 3
+Let X be a continuous random variable. Find the expected value, the median, the IQR, the 0.99-quantile, and $P(1.5 < X  < 2.5)$ when the pdf is given by.
+
+a. Here's the pdf:
+  - 0.2, [0, 1)
+  - 0.8, [1, 2)
+  - 0, otherwise 
+  1. Multiply midpoints by areas $E(X)=0.5(0.2)+1.5(0.8)= 1.3$
+```{r}
+0.5 * 0.2 +1.5 * 0.8
+```  
+  2. $q_{2} = 1(0.2) + (k-1)(0.8) = 0.5, k=1.375$. So our median is 1.375.
+```{r}
+
+1.1/0.8
+```
+  3. 1(0.2)+(k-1)(0.8) = 0.99, then k=1.9875
+```{r}
+
+1.59/0.8
+
+```
+  4.  
+
+I mean this is pretty easy stuff. I don't know what to say more about it. Just integrals and doingdoing multiplication and calculating quantiles
+
+#### Question 4
+A random variable X~Uniform(min=0, max=10)has population mean $\mu=E(X)=5$ and population variance $\sigma^{2}=Var(X)=\frac{25}{3}$. Let Y denote a normal random variable with the same mean and variance.
+
+a. For X, what is the ratio of its interquartile range to its standard deviation? 
+```{r} 
+
+q3 = qunif(p=0.75, min=0,max=10)
+q1 = qunif(p=0.25, min=0,max=10)
+iqr = q3-q1
+iqr
+
+sigma = sqrt(25/3)
+sigma
+
+# IQR = 5
+# sigma = 2.886
+ratio = iqr/sigma
+ratio # 1.73
+```
+  
+b. For Y, what is the ratio of its interquartile range to its standard deviation?
+
+```{r}
+q3 = qnorm(p=0.75, mean=5, sd=sqrt(25/3))
+q1 = qnorm(p=0.25, mean=5, sd=sqrt(25/3))
+iqr = q3-q1
+
+iqr # 3.89
+
+sigma = sqrt(25/3)
+
+ratio = iqr / sigma
+
+ratio # 1.34
+
+
+```
+
+
+#### Question 5
+
+For every symmetric random variable X, the median of X equals the average of the first and third quartiles of X?
+  
+  1. True.
+  2. If q3 = q2+k, the third quartile is k units above the median. Since the distribution is symmetric, we can reasone that q1=q2-k
+  
+For every random variable X, the interquartile range of X is greater than the standard deviation of X?
+  
+  1. False.
+  2. If the standard deviation is 0, then the IQR is also zero by reason. For any discrete RV, I can replace the highest value with positive probability for a number large enough to make this statement false. The IQR doesn't change, but I can make the standard deviation as large as I need. To illustrate this, you can use a vector of x {1, 2, ..., 99} and the last value equal to 10000.
+  3. If you want to express this as a random variable, then of x as a range of x values with pmf given by $f(x_{ i}) = 1/100$ for values i=i, ..., 100. 
+
+```{r}
+x = 1:99
+x[100] = 10^4
+sd = sqrt(mean(x^2) - mean(x)^2)
+c(sd, IQR(x))
+````
+  
+
+For every random variable, the expected value of lies between the first and third quartiles of X? 
+
+- False, the expected value can be higher than your third quartile. We can keep using the code we have in our previous part. We'll just make the highest value large enough
+
+```{r}
+c(mean(x), quantile(x, probs=0.75))
+
+
+
+
+```
+If a random variable's standard deviation equals zero, so does its interquartile range?
+
+- True, if the $\sigma = 0$, every value has to be equal to the mean $\mu$, but then q1=q3, and the IQR is also zero
+
+
+If the median of a random variable equals its expected value, then the random variable is symmetric?
+
+- That's actually false
+
+```{r}
+
+x = c(1, 2, 3, 3.9, 5.1)
+
+
+```
+
+
+## Module 4
+
+### Quick Check 1: Working with Dataframes
+
+
+#### Question 1
+```{r}
+# 1. Get the description of the data-frame
+help(faithful)
+```
+
+#### Question 2
+Use the data frame faithful already included in R. Create a vector using the variable waiting in this data frame. Assume your vector is a random sample and obtain the plug-in estimate for the variance of the population of waiting times. Answer with two decimals. 
+
+```{r}
+waiting_times = faithful$waiting
+
+n = length(waiting_times)
+fx = rep(1/n, n)
+muhat = sum(waiting_times * fx)
+sigma2hat = sum((waiting_times - muhat)^2 * fx)
+
+sigma2hat
+
+```
+
+#### Question 3
+
+Read butterfly.txt and find the plug-in estimate of the 0.7 quantile forewing area of the monarch butterflies. 
+
+```{r} 
+butterfly_df = read.table("./data/butterfly.txt")
+forewing_area_series = butterfly_df$FW.area
+quantile(x=forewing_area_series, probs=0.7) # 877.4
+```
+
+
+#### Question 4 and 5 
+```{r}
+# Install and load the library containing the data frame
+install.packages("fivethirtyeight")
+library(fivethirtyeight)
+?fivethirtyeight::US_births_2000_2014
+
+qqnorm(fivethirtyeight)
+qqline(fivethirtyeight)
+
+```
+
+### Quick Check 2: Random Samples, Simulations, and Functions in R
+
+
+#### Question 1 
+Obtain a random sample of size 50 from a normal distribution with mean 10 and variance 25. Find the 0.7-quantile of your sample.
+```{r}
+
+my_sample <- rnorm(n=50, mean=10, sd=5)
+quantile(x=my_sample, probs=0.7) # 12.31
+```
+
+#### Question 2
+Use random seed 1234 before obtaining your sampel .Then obtain a random sample of 25 observations with replacement form a population distributed as binomial(5, 0.8). What is the fifth observation in your sample?
+
+
+```{r}
+set.seed(1234)
+my_sample <- rbinom(n=25, size=5, prob=0.8)
+my_sample[5]
+```
+
+#### Question 3 
+```{r}
+set.seed(1)
+urn <- rnorm(10, 0, 1)
+x <- sample(x = urn, size = 10, replace = FALSE)
+y <- sample(x = urn, size = 10, replace = FALSE)
+IQR(x) - IQR(y)
+IQR(x-y)
+```
+a. The urn has 10 items. The samples are picking from that urn without replacement, both of them. They will get the same data, but probably in a different ordering. However this won't change the fact that they'll have the same IQR.
+b. You also know thati f the urn was bigger, like 100, the IQR wouldn't be zero. I'm saying that the IQR would likely be different because we have 100 items to choose from, so there's no guarantee we land on the same items for both samples.
+c. Also if you just used replacement, yeah things would be different. 
+
+#### Question 4
+Create a function called range80 that uses as argument a vector of numbers and calculates the difference of the 0.9-quantile minus the 0.1-quantile of this vector. 
+
+```{r}
+vec <- c(7.73, 7.17, 18.79, 9.21, 15.37, 10.73, 12.90, 12.42, 13.92,
+         5.34, 6.85, 14.05, 9.63, 6.85, 4.75, 10.25, 17.33, 15.50,
+         11.18, 9.95, 12.93, 8.79, 14.59, 17.17, 11.23)
+
+range80 = function(x) {
+  q90 = quantile(x=x, probs=0.9)
+  q10 = quantile(x=x, probs=0.1)
+  return (q90-q10)
+}
+
+range80(vec)
+```
+
+#### Question 5
+Assume that the population can be described as $X~binomial(20, 0.4)$, we'll need to run a simulation. Here are the requirements:
+  - Use range80 on a random sample of 50 observations from this population.
+  - Generate 10,000 replications and store them in a vector. So that's 10,000 of those samples.
+  - Calculate the mean of the vector of replications (mean of sample means)
+
+```{r}
+range80 = function(x) {
+  q90 = quantile(x=x, probs=0.9)
+  q10 = quantile(x=x, probs=0.1)
+  return (q90-q10)
+}
+
+
+replicas = replicate(n=10000, expr=range80(rbinom(n=50, size=20, prob=0.4)))
+
+mean(replicas) #5.37
+```
+### Quick Check 3: 
+
+1. Compile into html and pdf
+2. Use two underscores before and after to bold things.
+
+3. Let's change this so that you don't show any R code, and only show the result of a+b
+```{r, echo=False, eval=4}
+a <- 3
+b <- 4
+a
+a+b
+```

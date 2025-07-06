@@ -1,0 +1,1471 @@
+---
+title: "Nguyen_Final_Review"
+author: "Kevin Nguyen"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Module 5
+
+## Quick Check 1: WLLN and CLT 
+
+### Question 1 
+
+1. The expected value of a discrete RV is $\sum_{x \in X(s)}{x \cdot f(x)}$
+2. $E(X_{1}) = 0.6(3) + 0.3(4) + 0.1(10) = 1.8+1.2+1 = 4$
+
+### Question 2 
+
+1. The variance of a discrete random variable is $\sum_{x \in X(S)}{(x - \mu)^{2} \cdot f(x)}$
+2. $Var(X_{1}) = (3-4)^{2}(0.6) + (4-4)^{2}(0.3) + (10-4)^{2}(0.1) = 4.2$
+
+### Question 3 
+
+Let $n=80$, calculate $E(\bar{X}_{80})$ (expected value of the sample mean).
+
+1. The expected value of the sample mean is in general form $E(\bar{X}_{n}) = \mu$. Remember $E(X_{i}) = \mu$, so it just means the sample mean should be the same/converge to the mean of a random variable.
+
+2. $E(\bar{X}_{80}) = E(X_{i}) = 4$
+
+### Question 4
+Calculate $Var(\bar{X}_{80})$
+
+1. The variance of a sample mean is $Var(\bar{X}_{n}) = \frac{\sigma^{2}}{n}$, where $Var(X_{i}) = \sigma^{2}$, so that's a little simpler. We just need the variance of some random variable.
+
+2. $Var(\bar{X}_{80}) = \frac{4.2}{80} = 0.0525$
+
+### Question 5
+
+Since $n=80$, we can say $\bar{X}_{80}$ follows a normal distribution based on the CLT. Calculate $P(3.8 < \bar{X}_{80} \leq 4.1)$
+
+1. Since it's a normal distribution you should just be able to use R in order to calculate these values. So we know the expected value and variance of the sample mean, that's enough for the calculations.
+2. $P(3.8 < \bar{X}_{80} \leq 4.1) = P(X \leq 4.1)- P(X < 3.8)$
+```{r}
+
+expected_value = 4
+variance = 0.0525
+
+p = pnorm(q=4.1, mean=expected_value, sd=sqrt(variance)) - pnorm(q=3.8, mean=expected_value, sd=sqrt(variance)) 
+
+
+p # 0.477
+```
+
+## Quick Check 2: Point Estimation
+
+### Question 1
+
+When a plug-in estimator is used to estimate a given parameter, you're doing point estimation.
+
+### Question 2
+
+If you're using $\bar{X}_{n}$ as a point estimator of $\mu$, you're relying on the idea of consistency. You're betting on the fact that since you have a high enough sample size, \bar{X}_{n} has a higher chance of converging to $\mu$ as $n \to \infty$.
+
+### Question 3
+
+The plug-in standard deviation is a consistent estimator because it converges in probability to $\sigma$ as your sample size $n \to \infty$. Meaning as the smaple size increases, the probability that our estimator will differ from the true value gets smaller and smaller. However it isn't unbiased because it will on average underestimate $\sigma$.
+
+### Question 4
+
+The sample standard deviation is an unbiased and consistent estimator of the population standard deviation.
+
+### Question 5
+A procedure that uses data to test whether a claim seems consistent with the data observed corresponds to what type of inferential methods?
+
+This is called hypothesis testing.
+
+### Extra note 
+Plug-in standard deviation is a biased estimator. Here you're* **plug in** the sample mean into the population SD formula. It's consistent but biased. 
+
+Usually we use the sample standard deviation which is the default and unbiased because $E(s^{2}) = \sigma^{2}$
+
+## Quick Check 3: Hypothesis Testing 
+
+### Question 1 
+
+Hypotheses:
+- $H_{0}:$ God exists
+- $H_{1}:$ God does not exist
+
+
+### Question 2 
+
+Type 1 error is when we reject the null hypothesis when we shouldn't. So when the null hypothesis is correct but we reject it.
+
+Here that's concluding that God doesn't exist when in reality God exists.
+
+### Question 3 
+The burden of proof is on non-believers.
+
+### Question 4 
+The null hypothesis receives a privileged status.
+
+### Question 5
+Even if we have a p-value, a significance level is needed before we make a decision.
+
+### Question 6
+
+$\hat{p} = \frac{450}{1000} = 0.45$
+
+### Question 7
+Calculating the test statistic:
+
+1. Assuming the null hypothesis, let $p = 0.5$. Every trial is a bernoulli trial, we can say that our population variance $\sigma^{2} = p(1-p) = 0.25$
+2. The sample variance $Var(\bar{X}_{700}) = \frac{\sigma^{2}}{n} = 0.25/700$. The sample standard deviation is easily derived $\sigma_{\bar{X}_{700}} = 0.01889$
+3. Since we know $\sigma$ (we derived variance earlier), we can use a z statistic instead of a t statistic.
+4. $z = \frac{\hat{p} - p_{0}}{\sigma / \sqrt(n)} = \frac{0.46 - 0.5}{0.01899} = -2.117$
+
+
+### Question 8 
+
+1. Since $H_{1}: \mu \neq 0.5$ we're doing a two sided test. So to find the p-value you'll find the area -2.117 standard deviations below and 2.117 standard deviations above the mean:
+```R
+# P(Z >= z) = 1 - P(Z <= z)
+
+one_tail_p = 1 -pnorm(2.117)
+p = 2 * one_tail_p  # 0.034
+```
+
+### Question 9 
+
+Since $p > \alpha = 0.03$, we fail to reject $H_{0}$
+
+
+### Question 10
+Calculating the test statistic
+
+1. Assuming $H_{0}$ which means $\mu=10$. It doesn't seem like we'll be able to derive the population variance, so we'll be using a t-statistic instead of a z-statistic. Instead of using $\sigma$, we'll use $s_{n}$ in our test statistic calculations.
+2. $t = \frac{\bar{X}_{n} - \mu}{s_{n}} = \frac{11.93 - 10}{17.45 / \sqrt{225}} = 1.659$
+
+
+### Question 11 and 12
+Calculating the p-value. This is a two sided test. 
+
+1. P-value = $2 * P(T \geq t)$
+```R
+
+2 * (1 - pt(abs(t), df=224)) # 0.098
+
+```
+Since $p = 0.098 < \alpha = 0.10$ we reject $H_{0}$ and accept $H_{1}$.
+
+
+## Quick Check 4: More About Hypothesis Testing 
+Basically if you know $\sigma$ you can use a Z statistic. However if it's unknown, then you use the sample standard deviation.
+
+### Question 1 
+
+In the company's point of view:
+- $\mu = 800$ is what the company believes.
+- $\bar{x} = 745.1, s =238.0$
+- $n=100$
+
+The burden of proof is on the consumers, they need evidence to reject the company's claim.
+
+
+### Question 2
+- $H_{0}: \mu \geq 800$
+- $H_{1}: \mu < 800 $
+
+### Question 3
+1. The test statistic would be a t-statistic instead of a z-statistic because we don't know $\sigma$. 
+2. $t = \frac{\bar{x} - \mu}{s_{n} / \sqrt{n}} = \frac{745.1 - 800}{238/\sqrt{100}} = -2.30$
+
+### Question 4
+
+1. Based on $H_{1}$, this is a left tailed test. Our p-value would be $p = P(T < -2.30)$, where this is done on a t-distribution with n-1 degrees of fredom.
+2. Here's the R code:
+```{r}
+p_value = pt(q=-2.30, df=99) # 0.011
+```
+
+### Question 5
+Since $p > \alpha = 0.01$, we fail to reject the $H_{0}$
+
+
+## Problem Set 5
+
+### Question 2 
+- $\mu_{c} = 351, \mu_{p}=350$
+- $\sigma_{c}=\sigma_{p} = 1$
+- $n_{c} = 40, n_{p} = 43$
+
+#### Part a
+1. $E(\bar{X}_{40}) = \mu = 351$
+2. $Var(\bar{X}_{40}) = \frac{\sigma^{2}}{n} = \frac{1^{2}}{40} = 0.025$
+
+#### Part b
+
+1. $E(\bar{Y}_{43}) = \mu_{p} = 350$
+2. $Var(\bar{Y}_{43}) = \frac{\sigma^{2}}{n} = \frac{1^{2}}{43} = 0.023$
+
+#### Part c 
+
+We can't really find $P(X_{1} > 351.4)$ mainly because we don't know it's probability distribution. In particular we don't know whether it follows a normal distribution.
+
+#### Part d
+We can definitely find $P(\bar{X}_{40} > 351.4)$. We know the expected value and variance of $\bar{X}_{40}$. As well as this, we ca nassume that it's approximately normal due to it having $n=40 > 30$ according to the Central Limit Theorem. That's all we need to say $\bar{X}_{40} \sim N(351, 0.025)$
+
+```{r}
+1 - pnorm(q=351.4, mean=351, sd=sqrt(0.025)) # p-value = 0.0057
+```
+
+#### Part e
+
+1. Find $P(Z > 0), where $Z = \bar{X}_{40} - \bar{Y}_{43}$
+2. Then $E(Z) = 1, Var(Z) = \frac{1}{40} +\frac{1}{43} = \frac{83}{1720}$
+```{r}
+# p_value = 1; essentially 
+p_value = 1 - pnorm(q=0, mean=1, sd=0.2196)
+```
+
+
+### Question 3
+- $H_{0}: \mu \geq 0$
+- $H_{1}: \mu < 0$ 
+
+1. $t = \frac{-0.1833 - 0}{5.18633 / \sqrt{60}} = -0.2737$
+2. This is a two sided test, so $p = 2 \cdot P(T \geq |t|) = 2 \cdot (1 - P(T \leq |-0.2737|))$
+```{r}
+# Bruh this needs to change
+2 * (1 - pnorm(abs(-0.2737))) # 0.785
+```
+
+### Question 4
+
+#### Part a
+- $H_{0}: p = 0.5$
+- $H_{1}: p > 0.5$
+
+#### Part b and c
+```{r}
+
+# P(Y >= 13) = 1 - P(Y < 13) = 1 - P(Y <= 12) = 0.131
+1 - pbinom(q=12, size=20, prob=0.5) 
+
+# Pretty large so probably not
+# P(Y >= 18) = 1  - P(Y < 18) =  1 - P(Y <= 17)
+
+1 - pbinom(q=17, size=20, prob=0.5)
+```
+
+
+### Question 5
+
+#### Part a 
+In the perspective of the consumers:
+- $H_{0}: \mu \leq 23$ 
+- $H_{1}: \mu > 23$ 
+
+So the consumers would like to believe that it's less than 23 percent. Then the company would need to prove the alternative hypothesis.
+
+#### Part b
+In the perspective of the company:
+- $H_{0}: \mu \geq 23$
+- $H_{1}: \mu < 23$
+
+The company prefers to believe that they're above or equal to 23 percent, so we keep that as the null hypothesis.
+
+#### Part c 
+Let $\bar{x} = 22.8$ and $s = 3$.
+
+The test-statistic would have to come from a t-distribution it seems since $sigma$ is not given:
+
+$t = \frac{\bar{x} - \mu}{s / \sqrt{n}} = \frac{22.8 - 23}{3 /\sqrt{225}}$
+```{r}
+
+t = (22.8 - 23) / (3 / sqrt(225)) # -1
+```
+
+#### Part d 
+```{r}
+# Let your hypotheses be the ones from part a
+# So that means we're going to do a right tailed test
+# P(T > t) = 1 - P(T <= t) = 0.84
+1 - pt(-1, 224) # 0.84
+```
+#### Part e 
+```{r}
+
+# Let your hypotheses be the ones from part b. This means that we'll be
+# doing a left tailed test
+# P(T <= t) = 0.159
+pt(-1, 224) # 0.159
+
+
+```
+This p-value is still large so we fail to reject $H_{0}$.
+
+### Question 6
+
+#### Part a
+That means the alternative hypothesis was correct. However in part 4d, we failed to reject the null hypothesis, making a type 2 error because we failed to reject a false $H_{0}$.
+
+#### Part b
+In this case, recall that $H_{0}: \mu \geq 23$ and we found $p=0.16$. We failed to reject $H_{0}$ and $H_{0}$ turned out to be true. So we made a correct decision, which is nice.
+
+# Module 6
+
+## Quick Check 1: Confidence Intervals
+
+### Question 1
+1. When they say "point estimate", they're just asking: "Given a single sample, what's an estimate for the average waiting time?". We can say that $E(\bar{X}_{n}) = \mu$
+```{r}
+waiting_minutes = faithful$waiting
+sample_mean = mean(waiting_minutes) # 70.89
+n = length(waiting_minutes)
+```
+
+### Question 2-3
+1. Confidence = 0.95, $\alpha = 1-confidence = 0.05$. A confidence interval is two tailed, so each tail encloses about 0.025 area.
+2. Then $I = (\bar{x}-q \cdot \frac{\sigma}{\sqrt{n}}, \bar{x}+q \cdot \frac{\sigma}{\sqrt{n}})$. 
+3. The main work is just calculating the quantile needed for the interval. First let's focus on the positive tail, which is at the 1-0.025= 0.975. That's also denoted as $1 - \frac{\alpha}{2}$ quantile. 
+
+```{r} 
+alpha = 0.05 
+q = qnorm(1 - (alpha/2)) # 1 - alpha/2 quantile
+sigma = 13
+q
+
+lb = sample_mean - q * (sigma / sqrt(n))
+ub = sample_mean + q * (sigma / sqrt(n))
+
+# Yeah here's the interval information
+c(lb, ub) # (69.35, 72.44)
+```
+### Question 4-5
+Assuming that the standard deviation is unknown, we'd have to use a t-statistic. Also you'd have to use the sample standard deviation.
+```{r}
+waiting_minutes = faithful$waiting
+sample_mean = mean(waiting_minutes) # 70.89
+n = length(waiting_minutes)
+alpha = 0.05 
+q = qnorm(1 - (alpha/2)) # 1 - alpha/2 quantile
+sigma = sd(waiting_minutes)
+lb = sample_mean - q * (sigma / sqrt(n))
+ub = sample_mean + q * (sigma / sqrt(n))
+c(lb, ub) # [1] 69.28143 72.51269
+
+``` 
+
+### Question 6, 7, and 8 
+```{r}
+waiting_minutes = faithful$waiting
+sample_mean = mean(waiting_minutes) # 70.89
+n = length(waiting_minutes)
+
+confidence = 0.97
+alpha = 1 - confidence
+q = qnorm(1 - (alpha/2)) # 1 - alpha/2 quantile
+sigma = 13
+lb = sample_mean - q * (sigma / sqrt(n))
+ub = sample_mean + q * (sigma / sqrt(n))
+c(lb, ub) 
+
+```
+- quantile is 2.17
+- lower bound is 69.19 rounded 
+- upper bound is 72.61
+
+### Question 9
+- $\sigma = 13$
+- confidence = 0.97, $\alpha = 0.03$
+- $n=?$
+- $L=2$
+
+1. The formula for calculating a length $n = (\frac{2 \cdot q \cdot \sigma}{L})^{2} = (\frac{2 \cdot 2.17 \cdot 13}{2})^{2} = 795.87$
+2. So you need to have a sample size 796 for your interval to be of length 2 minutes.
+
+### Question 10
+It means we are 95% confident on the procedure. Out of all hte possible intervals obtained during this procedure, 95% of those intervals will contain the true average waiting time $\mu$.
+
+## Quick Check 2: One Sample Location Problems 
+
+### Question 1
+This is a paired test, like there are logical pairs here. So this is a one sample test. The experiment unit is a pair of twins
+
+### Question 2 
+The average difference in IQ score for all twins
+
+### Question 3
+The null hypothesis would probably be the idea that they're the same, whilst the alternative would indicate the opposite
+- $H_{0}: \mu = 0$
+- $H_{1}: \mu \neq 0$
+
+### Question 4, 5, 6
+- $\sigma$ isn't known so we're calculating a t-statistic with a degrees of freedom of n-1
+```{r}
+burt = carData::Burt
+sample_iq_diff = burt$IQbio - burt$IQfoster
+
+s = sd(sample_iq_diff)
+sample_mean = mean(sample_iq_diff)
+n = length(sample_iq_diff)
+
+numerator = (sample_mean - 0) 
+denominator = s / sqrt(n)
+t = numerator / denominator # t = -0.12
+
+
+# Two tailed test 
+p = 2 * (1-pt(q=abs(t), df=n-1)) # 0.901
+
+```
+- $t = -0.12$
+- $n = 27-1 = 26$
+- $p=0.901$
+
+### Question 7
+
+1. Pop normal, sample size large and variance known
+2. Pop normal, sample size large, and variance unknown. This is because you at least know that since a large sample size, you can consider the sample mean normally distributed I think.
+3. Pop normal, sample size small and variance known
+
+### Question 8 
+When to use a t-distribution
+
+1. When pop. normal, sample size small, and unknown variance
+
+### Question 9
+We literally got a $p=0.901$ so we're failing to reject $H_{0}$
+
+### Question 10 and 11
+```{r}
+# Load the data
+burt = carData::Burt
+
+# Compute IQ differences. Then calculate sample size, smaple mean, and sample
+# standard deviation
+sample_iq_diff = burt$IQbio - burt$IQfoster
+n = length(sample_iq_diff)          # 27
+sample_mean = mean(sample_iq_diff)  # -0.1851852
+s = sd(sample_iq_diff)              # 7.736233; again we don't know sigma
+
+# Calculate t-statistic
+confidence = 0.96
+alpha = 1 - confidence
+
+# Calculate the critical value itself; the 1-alpha/2 quantile for the t-dist
+t_crit = qt(1-alpha/2, df=n-1)
+margin_error = t_crit * (s / sqrt(n))
+
+# Calculate lower and upper bounds
+lower_bound = sample_mean - margin_error # -3.40
+upper_bound = sample_mean + margin_error # 3.03
+```
+Pretty easy stuff, the only thing we should remember 
+
+## Quick Check 3: Two Sample Location Problems 
+
+The most important part of this quick check is probably the example. We know it's a 2 sample t-test because there are two differing populations. There's no natural pairing. We also know that we have to do a welch's t-test
+```{r}
+
+data <- read.table("qc_data.txt", header=TRUE)
+
+# 1. Get sample means, n values, and sample standard deviations
+xbar1 = mean(data$seniors)
+xbar2 = mean(data$freshmen)
+n1 = length(data$seniors)
+n2 = length(data$freshmen)
+s1 = sd(data$seniors)
+s2 = sd(data$freshmen)
+
+# 2. Calculate the welch's t statistic
+Delta_hat = xbar1-xbar2     # 2.22
+Delta_0 = 0 # Assumes H_{0}
+se = sqrt(s1^2/n1 + s2^2/n2) # 1.28
+t_welch = (Delta_hat - Delta_0) / se # 1.726
+
+# 3. Use that one complex formula to calculate the estimated degrees of freedom.
+nu_hat = (s1^2/n1 + s2^2/n2)^2/((s1^2/n1)^2/(n1-1) + (s2^2/n2)^2/(n2-1)) # 87.965
+
+# 4. Let's calculate the p-value with some degrees of freedom
+# Note: This should be a right tailed test.
+pvalue = 1 - pt(1=t_welch, nu_hat)
+
+# 5. Let's have a 95% confidence interval 
+alpha = 1 - 0.95
+q = qt(1-alpha/2, df=nu_hat)
+lb = Delta_hat - q*se # -0.82
+ub = Delta_hat + q*se # 5.272
+```
+
+
+
+
+## Problem Set 6
+
+### Question 1 
+- $\mu = 9453$
+- $E(X) = \mu$; unbiased estimator I guess
+- $s = 6$, this is the sample standard deviation
+- $\alpha = 0.01, L=2$
+
+1. A confidence of 0.99 means $\alpha = 0.01$, and that each tail encloses about 0.005 area each. We don't know $\sigma$, that's why we're using an estimator via that altimeter. Finally we know $L=2$ and we're calculating the sample size $n$. 
+
+2. The formula is $n = (\frac{2 q \sigma}{L})^{2}$, but we'll just substitute for the sample standard deviation.
+
+
+Here's the code:
+```{r}
+s = 6
+L = 2
+alpha = 0.05 
+
+# Calculate q as the 1-(alpha/2)-quantile of the distribution
+q = qnorm(1-(alpha/2))
+
+n = (2 * q * s / 2)^2 # 57.47, so about 58
+```
+
+### Question 2
+
+a. A normal probability plot for arrival delays is heavily right skewed. You can see this in the box plot, qq plot, etc.
+
+b. Let the hypotheses be:
+- $H_{0}: \mu \leq 4.5$
+- $H_{1}: \mu 4.5$; Are arrival delays greater than 4.5 minutes?
+- $\alpha = 0.07$
+
+```{r}
+library(nycflights23)
+population1 = na.omit(flights$arr_delay)
+set.seed(136)
+
+x = sample(population1, 200, T)
+sigma = sqrt(mean(population1^2) - mean(population1)^2)
+mu0 = 4.5
+xbar = mean(x)
+n = length(x)
+
+# z statistic since we know variance
+zstat = (xbar-mu0) / (sigma/sqrt(n))
+p_value = 1 - pnorm(zstat) # 0.007
+p_value 
+```
+Reject $p = 0.007 < \alpha = 0.07$, we can reject $H_{0}$ and accept $H_{1}$. Yeah what really got me about this question, and probably a lot of others is the fact that I forgot that once we have mu, we can calculate the variance
+
+c. Now assuming we don't know $\sigma$ we would use the sample standard deviation and a t-distribution.
+
+```{r}
+
+# Using sample standard deviation, calculate 
+# the area of the t-distribution with n-1 degrees of freedom.
+s = sd(x)
+tstat = (xbar - mu0) / (s / sqrt(n))
+p_value = 1 - pt(q=tstat, df=n-1)
+p_value 
+```
+So we'll reject the $H_{0}$ as well
+
+d. Did we make an error? 
+
+```{r}
+# First calculate the population mean
+mu = mean(population1) # 4.34
+
+```
+So $4.34 < \mu_{0}$, which indicates that $H_{0}$ was true, but we always rejected it. This means we've committed a Type 1 Error in both b and c, the idea of rejecting the null hypothesis when the null hypothesis was actually right.
+
+
+e. Using $\sigma$, obtain a 97% confidence interval?
+
+1. Well first we would calculate z-statistics for a z-interval. I guess the formula would be $I = (\bar{x} - q \cdot \frac{\sigma}{\sqrt(n)}, \bar{x} + q \cdot \frac{\sigma}{\sqrt{n}})$. 
+2. We'll calculate the q, which is the 1-alpha/2th quantile of the normal distribution. Then after that we should be done
+```{r}
+
+alpha = 1 - 0.97
+q = qnorm(1- (alpha/2))
+lb = xbar - q*(sigma/sqrt(n))
+ub = xbar + q*(sigma/sqrt(n))
+c(lb, ub) # 5.605, 23.36
+```
+
+f. Do obtain a 97% confidence interval, but don't use $\sigma$
+
+1. Assuming we don't know $\sigma$, we'll need to use the sample standard deviation. However you should note that we would now change to a t-distribution as well.
+```{r}
+alpha = 1 - 0.97
+s = sd(x)
+q = qt(1- (alpha/2), n-1)
+lb = xbar - q*(s/sqrt(n))
+ub = xbar + q*(s/sqrt(n))
+c(lb, ub) # 3.66, 25.30
+```
+
+
+### Question 3 
+
+#### Part: Sub-question 2
+a. The experimental unit is an elderly person
+b. The experimental units were drawn from two populations. The first being elderly people with dogs (population 1) and the second being elderly people without dogs (population 2). 15 units were drawn from each. This is a two sample problem since it involves 2 populations. This can't be a paired test either because there's no logical pairing.
+c. One measurement was taken from each population the score of the Hamilton instrument.
+d. The parameter of interest is $\delta$, which is the difference in means. The mean score for elderly people who own dogs vs the mean score for those who do not, $\Delta = \mu_{1} - \mu_{2}$
+e. The hypotheses:
+  - $H_{0}: \Delta \geq 0$
+  - $H_{1}: \Delta < 0$
+
+Umberto expects higher average scores for those who do own dogs, resulting in a positive $\Delta$, so that's our $H_{0}$.
+
+#### Part: Sub-question 6
+
+a. Experimental unit a runner
+b. The experimental units are drawn from one population of runners. 120 units were drawn from this population, it's a one sample problem.
+c. We take 2 measurements from each runner. The time it takes to complete the race with traidtion/customary racing flats $T$, and the time it takes to complete the race with the new racing flats denoted as $N$. So this is a pairs test, we have logical pairs, doing 2 measurements per unit. 
+d. The parameter of interest is $\mu$, the expected difference in seconds of the race finish time of the tradition and new shoes. Let $X_{i} = T_{i} - N_{i}$ be the time difference in seconds for the ith runner. We can let $X_{1}, ..., X_{120} \sim P$ with $E(X_{i}) = \mu, Var(X_{i}) = \sigma^{2}$
+e. Hypotheses are $H_{0}: \mu \geq 30$ and $H_{1}: \mu < 30$.
+
+
+#### Part: Sub-question 8
+
+a. The experimental unit is one couple.
+b. The experimental units are drawn from one population: couples enrolled in swing dance classes. 20 units were drawn from this population, and this is a one sample problem.
+c. We take 4 measurements from each couple, so 2 for each member of the couple: the resting pulse at the beginning and at the end of the ten week class. So this is a variation of a matched pairs test, because we know the logical pair are the measurements before and after. 
+d. The parameter of interest is $\mu$. A clever way to define this is summing up the difference of each member. So let $X_{i} = (E_{1i} - B_{1i}) + (E_{2i} - B_{2i})$ be the difference in ending and start pulse for the ith couple. the end minus the beginning for the first and the second members. Then you can say $X_{i} \sim P$ with $E(X_{i}) = \mu$ and $Var(X_{i}) = \sigma^{2}$. Since we want to find improvmenet of resting pulse, doing the end resting pulse minus the beginning $E-B$ would make sense. 
+
+$H_{0}: \mu \geq 0$ and $H_{1}: \mu < 0$.
+
+
+### Question 4
+
+#### Sub-question 1
+a. Experimental unit is a pair of seedlings of the same age. The measurements taken on each unit are the final height of the cross fertilized and the self-fertilized plant, both in inches.
+b. Let $X_{i}$ be the difference in heights for the ith pair, cross fertilization minus self-fertilization.
+c. Since the aim of the experiment is to show that cross-fertilization has greater vigor, against the status quo of them being the same, your alternative hypothesis should be that new claim:
+  - $H_{0}: \mu \leq 0$
+  - $H_{1}: \mu > 0$
+
+#### Sub-question 2
+```{r}
+seedlings = read.table("https://mtrosset.pages.iu.edu/StatInfeR/Data/seedlings.dat")
+
+# Create vector of height differences between cross and self
+x = seedlings[,1] - seedlings[,2]
+
+
+# Looking at the histogram and normal dist.. the data is 
+# doesn't come from a normal distribution. And it isn't symmetric.
+hist(x, breaks=15, freq=F)
+curve(dnorm(x,mean(x), sd(x), add=T, col="blue"))
+```
+
+#### Sub-question 3
+We assume that $X_{1}, ..., X_{n}$ are all normally distributed and we let $\theta = E(X_{i}) = \mu$.
+
+a. We're going to test do 1-sample significance test. We're getting the t-statistic it seems since sigma isn't given. 
+```{r}
+
+xbar = mean(x)
+mu_0 = 0 
+s = sd(x)
+n = length(x)
+t.stat = (xbar - 0) / (s / sqrt(n)) # 2.1421
+
+# This is a right tailed test,
+p_value = 1 - pt(q=t.stat, df=n-1) # 0.025 
+
+```
+The p-value is less than the specified level of $\alpha$, so we would reject $H_{0}$ and conclude that cross fertilized plants do have more vigor than self-fertilized counterparts.
+
+Now let's do a 90% confidence interval. So that would be a t-interval since we just did a t-test. So we can do this manually and we can also use the automatic version. I'll show both:
+```{r}
+
+alpha = 1- 0.9
+q = qt(1-(alpha/2), df=n-1) # 1.76
+
+# Calculate upper and lower bounds 
+lb = xbar - q * (s / sqrt(n)) # 0.46
+ub = xbar + q * (s / sqrt(n)) # 4.74
+
+```
+
+
+### Question 5
+- This is a one sample problem, but it's a matched pairs problem. It has logical ordering, and the two measurements for each experimental unit
+- The alternative hypothesis, or what they're trying to see, is whether the metacritic scores are harsher than the rotten tomatoes scores. Mathematically let $X_{i} = M_{i} - R_{i}$ to be the difference Metacritic and Rotten tomato scores for the ith movie. Then you can say that $\mu$ is the average difference between metacritic and rotten tomato scores.
+  - $H_{0}: \mu \geq 0$; metacritic are same or better.
+  - $H_{1}: \mu < 0$; metacritic is a lot harsher.
+
+
+```{R}
+
+data = fivethirtyeight::fandango
+diff = data$metacritic - data$rottentomatoes
+set.seed(100)
+x = sample(diff, 60) # sample of 60 score diffs
+
+
+xbar = mean(x)
+n = 60
+s = sd(x)
+
+# Calculating a t-statistic since we don't have sigma
+# Doing a left tailed test
+t = (xbar - 0) / (s / sqrt(n)) # - 1.50
+
+p_value = pt(t, n-1) # 0.068
+p_value
+```
+Since $p > \alpha = 0.01$, we fail to reject the null hypothesis. As a result, there is no statistical evidence that metacritic's ratings are harsher than rottentomatoes'.
+
+
+### Question 6
+
+#### Sub-question 1
+```{r}
+vec <- scan("https://mtrosset.pages.iu.edu/StatInfeR/Data/globulin.dat")
+
+i <- 1:12
+x <- vec[i]   # normal
+y <- vec[-i]  # diabetic
+
+# 
+# plot(density(x))
+# plot(density(y))
+
+# The logarithmic transformation makes the curves smoother
+# And closer to symmetric
+plot(density(log(x)))
+plot(density(log(y)))
+```
+
+#### Sub-question 3 
+The log transformation doesn't look normal for either x or y, but there's an improvement to the shape of the distribution. Whilst not normal, both curves are fairly symmetric.
+
+#### Sub-question 4 
+Let's setup the problem. 
+- We have two different populations the population of normal patients and the population of diabetic patients. It's definitely not matched pairs because there's no logical pairing here. 
+- $X_{i} = log(normal\_patient_{i})$
+- $Y_{j} = log(diabetic\_patient_{j}$
+- Here $E(X_{i}) = \mu_{1}, E(Y_{j}) = \mu_{2}$. The parameter of interest here is $\Delta = \mu_{1} - \mu_{2}$.
+- Let's talk about the hypotheses:
+  - $H_{0}: \Delta \geq 0$, regular have higher average
+  - $H_{1}: \Delta < 0$; diabetics have higher average, which is what the researchers want to prove.
+  
+1. We're doing a two-sample test, so we're definitely going to be doing a 2-sample test.
+
+```{r}
+# 1. Gather our observations (transformed by log)
+norm = log(x)
+diab = log(y)
+
+# 2. Calculate sample diff, and other parameter values.
+Delta.hat = mean(norm) - mean(diab)
+n1 = length(norm)
+n2 = length(diab)
+s1 = sd(norm)
+s2 = sd(diab)
+
+# 3. Calculate the t-statistic
+# Note: We're calculating the standard error (denom)
+# then the numerator
+se = sqrt( var(norm)/n1  +var(diab)/n2 )
+t.welch = (Delta.hat - 0) / se
+
+# 4. For a two-sample t-test, the degrees of freedom must # be estimated through a complex formula rather than 
+# something simple.
+nu.hat = (s1^2/n1+s2^2/n2)^2/((s1^2/n1)^2/(n1-1) + (s2^2/n2)^2/(n2-1))
+
+# 5. Now we just calculate a left tailed test for a t-distribution
+
+pt(q=t.welch, df=nu.hat-1) # 0.0005219
+```
+The p-value is very low, so we can reject the null hypothesis and accept the alternative hypothesis.
+
+
+# Module 7
+
+## Quick Check 1
+
+### Question 1
+- The thinness of the contour indicates the strength of the association. So a perfect circle (zero correlation) would actually indicate a normal bi-variate distribution.
+- The direction indicates positive or negative correlation.
+
+### Question 2
+- Weak positive association
+
+### Question 3 
+
+```{r}
+
+# 1. Get the data
+install.packages("alr4")
+data = alr4::BGSgirls
+
+# 2. Create function to standardize data 
+standardize = function(data) {
+  xbar = mean(data, na.rm=TRUE)
+  sd = sd(data, na.rm=TRUE)
+  standardized_data = (data - xbar) / sd 
+  return (standardized_data)
+}
+
+# 3. Actually standardize the data
+wt18_z = standardize(data$WT18)
+ht18_z = standardize(data$HT18)
+
+wt18_z[1] # first weight: -0.332
+
+
+# 4. Calculate Pearson's Coefficient. First define function and then plug stuff in
+calculate_pearson = function(x, y) {
+  xbar = mean(x)
+  ybar = mean(y)
+  s_x = sd(x)
+  s_y = sd(y)
+  n = length(x)
+  z_x = (x - xbar) / s_x
+  z_y = (y - ybar) / s_y 
+  r = sum(z_x * z_y) / (n-1)
+  return (r)
+}
+```
+
+## Quick Check 2
+
+### Question 4
+
+```{r}
+
+# 1. This approach doesn't yield enough precision
+# We must calculate them manually.
+x = faithful$eruptions
+y = faithful$waiting
+model1 = lm(y ~ x)
+model1
+# Intercept = 33.47
+# Slope = 10.73
+
+# 2. Manual calculations for OLS coefficient intercept
+# We need to calculate the OLS slope first 
+xbar = mean(x)
+ybar = mean(y)
+betahat1 = sum((x - xbar) * (y-ybar)) / sum((x-xbar)^2)
+betahat0 = ybar - (betahat1*xbar)
+betahat0 # 33.474
+betahat1 # 10.729
+
+# 3. Calculating the RSS. Get a vector of residuals
+# and sum their squared values
+ehat = y - (betahat0+betahat1*x) 
+RSS = sum(ehat^2) # 9443.38
+```
+### Question 5
+
+1. The OLS coefficient for variance is $\hat{\sigma} = \frac{RSS}{n-2}$
+```{r} 
+
+sigmahat = RSS / (length(x) -2)
+sigmahat # 34.97
+
+```
+### Question 8
+
+To get the residual for the third observation you'd need to create a vector of residuals, and then index the third one.
+```{r}
+ehat[3] # 4.763
+
+```
+## Quick Check 3
+
+### Question 1 and 2
+```{r}
+
+# 1. Get data and create the model
+x = faithful$eruptions
+y = faithful$waiting
+lm(y ~ x) # betahat1 = 10.73
+
+# 2. Get parameters from the model for calculating 
+# the test statistic
+n = length(x)
+beta1hat = summary(model1)$coef[2,1]
+se.beta1hat = summary(model1)$coef[2,2]
+
+# 3. Calculate test statistic
+k = 0 # due to h0
+t.stat = (beta1hat - k) / se.beta1hat # 34.08
+
+t.stat
+
+
+```
+### Question 3
+
+The test statistic is pretty far out there, so even if it's a two tailed test, we'll enclose like 0 area. As a result you want to reject the null hypothesis and accept the alternative:
+- Reject null hypothesis 
+- Conclude that eruption time of the current eruption has an effect on the waiting time for the next eruption.
+- The results are statistically significant.
+
+### Question 4
+- $H_{0}: \beta_{1] \geq 10$
+- $H_{0}: \beta_{1] < 10$
+
+```{r}
+x = faithful$eruptions
+y = faithful$waiting
+lm(y ~ x) # betahat1 = 10.73
+k = 10
+
+n = length(x)
+beta1hat = summary(model1)$coef[2,1]
+se.beta1hat = summary(model1)$coef[2,2]
+
+t.stat = (beta1hat - k) / se.beta1hat # 2.318
+t.stat
+
+```
+### Question 5
+To get the p-value, you basically want to get the left tailed test:
+```{r}
+# 1. 
+x = faithful$eruptions
+y = faithful$waiting
+lm(y ~ x) # betahat1 = 10.73
+k = 10
+n = length(x)
+beta1hat = summary(model1)$coef[2,1]
+se.beta1hat = summary(model1)$coef[2,2]
+t.stat = (beta1hat - k) / se.beta1hat # 2.318
+t.stat
+
+# 2. 
+pt(t.stat, df=n-2)
+
+```
+
+
+### Question 4
+This means you believe that for every additional minute that eruption lasts, hte next eruption increases more than 10 minutes. Do the test and calculate the test statistic.
+
+- Hypothesis:
+  - $H_{0}: \beta_{1} \geq 10$; our default belief
+  - $H_{1}: \beta_{1}  < 10$; 
+
+```{r}
+
+# 1. Get data and create the model
+x = faithful$eruptions
+y = faithful$waiting
+lm(y ~ x) # betahat1 = 10.73
+
+# 2. Get parameters from the model for calculating 
+# the test statistic
+n = length(x)
+beta1hat = summary(model1)$coef[2,1]
+se.beta1hat = summary(model1)$coef[2,2]
+
+# 3. Calculate test statistic
+k = 10
+t.stat = (beta1hat - k) / se.beta1hat # 34.08
+
+# 4. Right tailed test
+1- pt(q=t.stat, df=n-2) # 0.0105
+````
+
+### Question 7 
+
+```{r}
+# 1. Get data and create the model
+x = faithful$eruptions
+y = faithful$waiting
+lm(y ~ x) # betahat1 = 10.73
+beta1hat = summary(model1)$coef[2,1]
+se.beta1hat = summary(model1)$coef[2,2]
+
+alpha = 1 - 0.99
+n = length(x)
+q = qt(1 - (alpha/2), df=n-2) # Calculate the (1-alpha/2)-th quantile 
+
+
+# 2. Then calculate the lower and upper bounds
+# Note: 
+lb = beta1hat - q * se.beta1hat
+ub = beta1hat + q * se.beta1hat
+c(lb, ub) # 9.913, 11.546
+```
+
+### Question 8 and 9
+
+```{r}
+x = faithful$eruptions
+y = faithful$waiting
+model1 = lm(y ~ x) # betahat1 = 10.73
+r_squared = summary(model1)$r.sq # 0.811
+r_squared
+
+# Graph the residual plot 
+plot(model1, which=1)
+
+
+# 1. I mean there looks to be two clusters of data 
+# 2. The assumption of variance seems to be violated
+# 3. Doesn't look like a null plot
+```
+
+### Question 10
+- $X=x_{i} = 4.5$
+- Obtain a $92%$ prediction interval
+- I'll be real all of the calculations here are based on R
+
+```{r} 
+model1 = lm(waiting ~ eruptions, data=faithful)
+x_star = data.frame(eruptions=4.5)
+prediction = predict(model1, newdata=x_star, interval="prediction", level=0.92)
+prediction
+
+lower_bound = prediction[1, "lwr"]
+upper_bound = prediction[1, "upr"]
+c(lower_bound, upper_bound) # 71.330 92.184
+```
+
+
+
+## Problem Set 7
+
+### Question 2 
+
+#### Part a
+
+```{r}
+library(carData)
+data =carData::UN
+data = na.omit(data)
+x = log(data$ppgdp)
+y = log(data$fertility)
+
+model = lm(y ~ x)
+
+
+```
+
+#### Part b
+```{r}
+binorm.estimate <- function(Data) {
+  #
+  #  This function estimates bivariate normal parameters.
+  #  Each row of the n-by-2 matrix Data contains a single
+  #  observation of (X,Y).  The function returns a vector 
+  #  of 5 estimates: mean of X, mean of Y, variance of X, 
+  #  variance of Y, correlation of (X,Y). 
+  #
+  n <- nrow(Data)
+  m <- c(sum(Data[, 1]), sum(Data[, 2]))/n
+  v <- c(var(Data[, 1]), var(Data[, 2]))
+  z1 <- (Data[, 1] - m[1])/sqrt(v[1])
+  z2 <- (Data[, 2] - m[2])/sqrt(v[2])
+  r <- sum(z1 * z2)/(n - 1)
+  return(c(m,v,r))
+}
+
+binorm.scatter <- function(Data) {
+  #
+  #  This function plots a scatter diagram of the data
+  #  contained in the n-by-2 data matrix Data.  It also
+  #  superimposes the sample concentration ellipse.
+  #
+  ndots <- 628
+  xmin <- min(Data[, 1])
+  xmax <- max(Data[, 1])
+  xmid <- (xmin + xmax)/2
+  ymin <- min(Data[, 2])
+  ymax <- max(Data[, 2])
+  ymid <- (ymin + ymax)/2
+  dif <- max(xmax - xmin, ymax - ymin)/2
+  xlim <- c(xmid - dif, xmid + dif)
+  ylim <- c(ymid - dif, ymid + dif)
+  par(pty = "s")
+  plot(Data,xlab="x",ylab="y",xlim=xlim,ylim=ylim,
+       pch=".",cex=2)
+  #
+  #  Value of cex sets size of plotting symbol.
+  #
+  title("Scatter Diagram")
+  v <- binorm.estimate(Data)
+  m <- matrix(v[1:2], nrow = 2)
+  off <- v[5] * sqrt(v[3] * v[4])
+  C <- matrix(c(v[3], off, off, v[4]), nrow = 2)
+  E <- eigen(C,symmetric=TRUE)
+  a <- 1:ndots/100
+  Y <- cbind(cos(a), sin(a))
+  Y <- Y %*% diag(sqrt(E$values)) %*% t(E$vectors)
+  Y <- Y + matrix(rep(1, ndots), nrow = ndots) %*% t(m)
+  lines(Y)
+}
+
+# Based on this graph the relationship is negative and somewhat strong
+binorm.scatter(cbind(x, y))
+```
+
+#### Part c
+```{r}
+standardize = function(data) {
+  xbar = mean(data)
+  s = sd(data)
+  return ((x-xbar)/s)
+}
+x_log_standard = standardize(x)
+y_log_standard = standardize(y)
+
+y_log_standard
+
+
+```
+
+#### Part d
+```{r}
+
+# Step 1: Calculate the Correlation 
+xbar_weight = mean(weight)
+ybar_height = mean(height)
+s_x = sd(weight)
+s_y = sd(height)
+n = length(weight)
+z_x = (weight - xbar_weight) / s_x
+z_y = (height - ybar_height) / s_y
+r = sum(z_x * z_y) / (n-1) 
+
+# Verify it with a function
+# Note: Just an exmaple, but yea 
+cor(weight, height)
+
+
+```
+### Question 4
+
+#### Part A
+- $H_{0}: \beta_{1} = 0$
+- $H_{1}: \beta_{1} \neq 0$
+- $\alpha = 0.03$
+
+```{r}
+
+# beta1: follows a t-distribution with n-2 degrees of freedom
+
+
+library(carData)
+data =carData::UN
+data = na.omit(data)
+
+mod1 = lm(log(data$fertility) ~ log(data$ppgdp))
+summary(mod1)
+k = 0
+n = length(data$fertility)
+
+# 3. Get the sample slope, and information to calculate the t-statistic 
+# 4. Calculate p = 2 * p(T >= |t|)) = 2 * (1 - p(T<=|t|))
+beta1hat = summary(mod1)$coef[2,1]
+se.beta1hat = summary(mod1)$coef[2,2]
+
+# Note: T-statistic matches for what is shown for beta1hat
+t.stat = (beta1hat - k) / se.beta1hat # -14.78
+
+p_value = 2 * (1-pt(abs(t.stat), n-2)) # 0
+
+# Reject H0, accept HA
+```
+
+#### Part B
+- $H_{0}: \beta_{1} \geq 0$
+- $H_{1}: \beta_{1} < 0$
+Looking at the T-statistic, $-14.79$ is pretty large, and the area enclosed by that is fairly close to 0. We're looking at evidence for a left tailed test, so our new p-value is just half of the previous question's p-value.
+
+
+```{r}
+n
+# Easy probability for left tailed test. 199 rows have no missing values, and 
+# so minus 2 to get 197. You could also get this value by doing summary(model1)
+# Though I'm getting the idea that I have the wrong n value
+pt(q=-14.79, df=191)
+
+
+``` 
+
+#### Part C
+Finding the coefficient of determination should be pretty easy using the model and summary function
+```{r}
+
+r_squared = summary(mod1)$r.squared
+r_squared # 0.5277
+
+```
+
+#### Part D
+For a locality `ppgdp=1000` calculate the predicted `log(fertility` and obtain a 95% prediction interval for the response.
+
+
+We can actually do the first part pretty manually by doing $\hat{y}_{i} = \hat{\beta}_{0} + \hat{\beta}_{1}{x_{i}}$. However you need a little more math for the second part.
+```{r}
+
+# Output and get the intercept and slope
+mod1
+
+beta1hat = -0.2112
+beta0hat = 2.6941
+
+# We log it because ppgpd is in regular units but the linear model is in logs
+beta0hat+beta1hat*log(1000) # 1.235
+
+new_predictor = data.frame(ppdgp=1000)
+pred_int = predict(mod1, new_predictor, interval="prediction", level=0.95)
+pred_int
+
+```
+
+The method for this is actually not that much math, as we rely a lot on R for this problem:
+
+```
+x_star=data.frame(ppgdp=log(1000))
+prediction = predict(mod1, newdata=x_star, interval="prediction", level=0.95)
+```
+
+
+### Question 5
+
+#### Part a 
+
+```{r}
+data = carData::Davis
+weight = data$weight # predictor
+height = data$height # response
+
+
+# 1. Construct regression line by creating linear model
+model1 = lm(height ~ weight)
+
+summary(model1)$coef
+
+beta0hat = summary(model1)$coef[1,1] # 160.09
+beta1hat = summary(model1)$coef[2,1] # 0.15086
+
+```
+- linear regression line: $\hat{y}_{i} = 160.09 + 0.1508x_{i}$
+
+- Slope interpretation: For every one unit increase in weight, we estimate an average increase of 0.15 units in height. In english "For every additional kg, we expect the individual to be 0.15 cm taller"
+- Intercept interpretation: When $x_{i} = 0$, so when someone weights nothing? Well that doesn't really make sense as a real world thing, so the intercept has no real interpretation.
+
+#### Part b 
+```{r}
+plot(weight, height)
+abline(a=beta0hat, b=beta1hat, col="red", lwd=2)
+
+```
+The line does not seem to represent the relationship shown in the scatterplot due to the outlier in the bottom right corner of the graph.
+
+#### Part c 
+When they simply just say "Do a hypothesis test on the slope" without giving any more context, you can probably assume they want you to output the summary statistics and interpret based on that.
+
+
+```{r}
+summary(model1)
+
+```
+The t-statistic calculated on betahat1 is 2.718. The area enclosed by one tail for this t-statistic is about 0.00715 area. Even for a two-tailed test the p-value = 0.0143, which is very low. I would say that this is a case where you reject the $H_{0}: \beta = 0 $and accept $H_{1}: \beta \neq 0$. We have significant statistical evidence to conclude that weight influences height, or helps explain height
+
+
+
+### Question 6
+
+
+```{r}
+
+df = carData::Davis
+df = df[-12,]
+x = df$weight
+y = df$height
+model1 = lm(y ~ x)
+
+beta1hat = 0.15
+beta0hat = 160.09
+
+plot(x,y, xlab="weight",ylab="height", main="Height vs Weight", pch=19, col="blue")
+summary(model1)
+summary(model1)$r.squared
+
+plot(model1, which=1)
+```
+
+- THe residuals are around 0.
+- No special patterns are observed
+- The variance seems to be fairly constant for any fitted value 
+- There are a couple of outliers but beyond that the plot seems close to a null plot
+
+
+
+
+# Module 8
+
+- Be sure to review poisson and whatnot bruh
+
+
+## Quick Check 1:
+### Question 1
+
+```{r}
+
+# Claimed probabilities (under H0, the default belief) and our observed samples.
+# so we're going to assume the H0, which allows us to use these probabilities.
+p_values <- c(0.13, 0.14, 0.13, 0.24, 0.20, 0.16)
+observed_values <- c(121, 84, 118, 226, 226, 123)
+
+# 1. Calculate expected values by multiplying each probability by the total sample size!
+total_sample_size = sum(observed_values)
+
+expected_values = p_values * total_sample_size
+
+#Get blue m&ms expected counts
+expected_values[4] # 215.52
+
+# 2. Calculate the likelihood ratio test statistic
+G2 = 2 * sum(observed_values * log(observed_values/expected_values)) # 30.565
+
+# 3 and 4. Test whether the claim is crediable or not?
+# - To do this we need actually do a Chi-squared goodness of fitness test
+# - There are 6 categories here, 6-1 = 5, 5 degrees of freedom is a nice way to 
+# think about it. 
+# - Finally for GOF tests we only get the right tailed area 
+p_value = 1 - pchisq(q=G2, df=5) # 1.15e-05, basically 0
+
+# 5. We can reject H0 and accept H1. So we can reject their claim. So their
+# claimed proportions are not credible.
+```
+
+### Question 6
+
+- Hypotheses:
+  - $H_{0}: X_{i} \sim Binomial(16,0.29)$.
+  - $H_{1}:$ It doesn't follow a binomial distribution.
+- Cells:
+  - $E_{1} = \{0,1\}$
+  - $E_{j}$ for j=2,3,4,5,6,7,8
+  - $E_{9}$ for j=9,10,11,12,13,14,15,16
+
+```{r}
+# 7. Get the expected counts of all
+# Get the data
+cells <- 1:9
+observed_counts <- c(30,93,159, 184, 195, 171, 92, 45, 31)
+total_sample_size = sum(observed_counts)
+# The expected count for each cell that we've defined
+# - I'm going to calculate the probabilities for each cell and then
+# multiply it by the total sample size 
+
+# p1 = P(X <= 2)
+p1 = dbinom(x=0, size=16, prob=0.29) + dbinom(x=1, size=16, prob=0.29)
+
+# pj = P(X = j); 8 events!
+pj = c(
+  dbinom(x=2, size=16, prob=0.29),
+  dbinom(x=3, size=16, prob=0.29),
+  dbinom(x=4, size=16, prob=0.29),
+  dbinom(x=5, size=16, prob=0.29),
+  dbinom(x=6, size=16, prob=0.29),
+  dbinom(x=7, size=16, prob=0.29),
+  dbinom(x=8, size=16, prob=0.29)
+)
+
+p9 = c(
+  dbinom(x=9, size=16, prob=0.29),
+  dbinom(x=10, size=16, prob=0.29),
+  dbinom(x=11, size=16, prob=0.29),
+  dbinom(x=12, size=16, prob=0.29),
+  dbinom(x=13, size=16, prob=0.29),
+  dbinom(x=14, size=16, prob=0.29),
+  dbinom(x=15, size=16, prob=0.29),
+  dbinom(x=16, size=16, prob=0.29)
+)
+
+e1 = total_sample_size * p1 # 31.421
+ej = total_sample_size * pj # 8 difdferent cells 
+e9 = total_sample_size * p9 # A single cell, so sum up the values
+
+expected_counts = c(
+  e1,
+  ej,
+  sum(e9)
+)
+
+# Get a vector of expected counts for all 9 events/cells
+expected_counts
+
+# 8. Calculate likelihood ratio test statistic
+G2 = 2 * sum((observed_counts*log(observed_counts/expected_counts))) # 11.96
+
+# 9. You have 9 cells, 9 different events/categories. So 9-1 = 8, that's your degrees of freedom.
+df = 8
+
+# 10. To calculate the p-value, you need to calculate the area to the right of the test-statistic for a chi-squared 
+# distribution that has 8 degrees of freedom
+p_value = 1 - pchisq(G2, df=df) # 0.1525
+
+# 11. Assuming that alpha = 0.07, since p > alpha, 
+# we fail to reject H0. We don't have enough evidence
+# to conclude that the random pixel generation 
+# algorithm is broken.
+
+# 12. Assume that we know have a new probability so
+# we estimated things from the data instead.
+# - Notice that we estimated a value, so that's 
+# decrements the unrestricted set and increases 
+# the restricted set. SO now the dimension of the restricted set changes from 8 to 7.  df = (9-1) - (1) = 7
+# - This should honestly only change the df and then the p-value because we calculate the p-value from df.
+
+```
+
+
+
+
+
+## Quick Check 2:
+
+### Question 1 
+
+So we have a 4 by 3 contingency table:
+```{r}
+observed_values <- matrix(c(74, 68, 154, 18, 
+                    18, 16, 54, 10, 
+                    12, 12, 58, 44),
+              nrow = 4, ncol = 3)
+n = 538
+expected_values = rowSums(observed_values)%o%colSums(observed_values)/sum(observed_values)
+
+
+num_rows = nrow(observed_values)
+num_cols = ncol(observed_values)
+df = (num_rows-1) * (num_cols-1)
+G2 = 2*sum(observed_values*log(observed_values/expected_values))
+p_value = 1 - pchisq(q=G2, df=df)
+
+
+
+# 1. Expected count for MC Posiitve
+observed_values[3][1] # Verifying that it's the third row first column
+
+expected_values[3][1] # 155.24
+
+
+# 2. Calculate test statistic? I'll 
+# use the likelihood ratio statistic then.
+# That's 68.295
+
+# 3. Degrees of freedom is 6
+
+# 4. P value is near 0s
+
+# 5. Reject the null hypothesis and 
+# accept the alternative hypothesis
+```
+
+
+
+
+
+### Question 2 
+
+### Question 3
+
+

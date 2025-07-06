@@ -1,0 +1,272 @@
+---
+title: "KevinNguyenMidtermFile"
+author: "Kevin Nguyen"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+Note to self: Show work. So latex, RScripts, and comments too
+
+
+# Problem 1
+
+## Question 1
+```{r}
+# install and load
+install.packages("alr4")
+library(alr4)
+
+# Get the column, get the length, create a plugin pmf, and calculate the plugin mean using summation formula
+strength_at_nine = alr4::BGSgirls$ST9
+n = length(strength_at_nine) 
+fx = rep(1/n, n)
+muhat = sum(strength_at_nine * fx)
+
+muhat # 60.45
+```
+Plugin population mean is 60.45.
+
+## Question 2
+```{r} 
+strength_at_nine = alr4::BGSgirls$ST9
+n = length(strength_at_nine) 
+fx = rep(1/n, n)
+muhat = sum(strength_at_nine * fx)
+
+# Calculate the plugin-variance first
+sigma2hat = sum((strength_at_nine - muhat)^2 * fx)
+
+sigmahat = sqrt(sigma2hat)
+
+sigmahat
+```
+Plug-in estimate for the population standard deviation is 15.01
+
+## Question 3
+```{r}
+# Plug-in estimations for quantiles should be no different from the population quantiles
+
+
+strength_at_nine = alr4::BGSgirls$ST9
+quantile(x=strength_at_nine, probs=0.7) # 67, use quantile function for your samples.
+```
+Plug-in estimate for the 0.7-quantile is 67.
+
+
+## Question 4
+```{r}
+
+# 1. First calculate your empirical pmf. 
+# 2. To get the probability that a randomly selected observation is greater than 80, we 
+# can just get the proportion.
+strength_at_nine = alr4::BGSgirls$ST9
+n = length(strength_at_nine) 
+fx = rep(1/n, n)
+
+mean(x > 80) # Both approaches in R are equivalent and produce 0.2 as the probability.
+1 - ecdf(x)(80) # P(X > 80) = 1 - P(X <= 80) 
+```
+The probability is 0.2
+
+## Question 5
+```{r}
+# Note: Don't need to copy this over everytime, but it's good for clarity I guess.
+strength_at_nine = alr4::BGSgirls$ST9
+
+# Graphing the boxplot: 
+# Analysis: There are 3 outliers in the boxplot indicated by the 3 circles that are outside of the plot's whiskers, with 2 being above the max and 1 being below the minimum. Looking at the median and comparing it to the first and third quartiles, the box plot seems to be roughly symmetric. The distance from the minimum (excluding outlier) to the first quartile seems to be about the same as the distance from the third quartile to the maximum (excluding outliers), which further reinforces that this is symmetric. This sample seems to be drawn from a normal distribution. The first quartile is about 50, the median is 60, and the third quartile is about 90. 
+boxplot(strength_at_nine)
+
+
+
+```
+```{r}
+
+# The median again seems to be about 60. The distribution is roughly symmetric so the mean and median should be very similar. Again this graph further reinforces that the data seems to be drawn from a normal distribution. 
+plot(density(x=strength_at_nine))
+
+```
+```{r}
+
+# The QQ-Plot shows that most of the data aligns/is captured by a straight line. Since the data fits this line very well, it indicates that the data is likely normally distributed. Also, you can see that there are some outliers at the end, indicated by the data points that are way above the line. 
+qqnorm(strength_at_nine)
+qqline(strength_at_nine)
+
+
+```
+
+# Problem 2
+
+## Question 6
+```{r}
+# Male polar bear params
+mu_x = 1108 
+sigma2_x = 15625
+sigma_x = sqrt(sigma2_x)
+
+# Male Kodiak bear params
+mu_y = 990
+sigma2_y = 12100
+sigma_y = sqrt(sigma2_y)
+
+# Probability that a polar bear is heavier than 1257:
+# 1. P(X > 1257) = 1 - P(X <= 1257) = 0.116
+1 - pnorm(q=1257, mean=mu_x, sd=sigma_x) 
+
+```
+The probability is 0.11
+
+## Question 7
+```{r}
+# 1. Find the quantiles of a normal distribution using qnorm(). The 0.3-quantile of X is 1042.45
+qnorm(p=0.3, mean=mu_x, sd=sigma_x)
+
+# 2. Verify the quantile by calculating the probability enclosed by this distribution 
+# from (-infinity, 1042.45]. This outputs 0.3, which increases the confidence in our solution.
+pnorm(q=1042.45, mean=mu_x, sd=sigma_x)
+```
+## Question 8
+```{r}
+
+# Your target value is mean + 2.4(standard deviation). The code for this is straightforward.
+target_value = mu_x + 2.4 * sigma_x
+target_value # 1408 pounds
+```
+
+## Question 9 
+
+1. $W = X - Y$
+2. $E(W) = E(X-Y) = E(X) - E(Y) = 1108-990= 118$
+3. $Var(W) = Var(X-Y) = Var(X+y) = Var(X) + Var(Y) = 15625+12100 = 27725$
+
+```{r}
+mu_w = mu_x - mu_y
+sigma2_w = sigma2_x + sigma2_y
+sigma_w = sqrt(sigma2_w) # Needed for calculation in the next part
+mu_w
+sigma2_w
+```
+
+For expected value, you simply just subtract them, which is the properties of expected value. For variance, when you're subtracting, you're actually adding. 
+
+## Question 10
+When a Kodiak bear is heavier than a Polar bear, that means our observation for Y is bigger, which means that $W = X - Y < 0$. This can be denoted as $P(W) < 0$ or $P(W) \leq 0$ since we're dealing with a continuous random variable, which will make the calculation translate more easily into R.
+
+```{r}
+
+# P(W <= 0) = 0.23; 
+pnorm(q=0, mean=mu_w, sd=sigma_w)
+
+
+```
+
+$W = X - Y$.
+
+# Problem 3
+
+## Question 11
+- This is probably not combination, but rather permutation. If you were picking numbers by just summing, then the sum of (1,2,3) is the same as (3,2,1). However let's apply the new rules. What if you get (1,3,2) and then (1,2,3), we'll they'd output to the same thing?
+
+```{r}
+# 15 in the urn and you pick 3. You can imagine this as the coin toss, but now there are 
+# 15 branches per toss.
+15^3
+```
+There are 3,375 different outcomes. Two example outcomes are (1,1,1) and (1,2,3).
+
+
+## Question 12
+
+$X(S) = \{ 2, 4, 6, 8, 10 \}$
+
+Some workings:
+  - (5,2,4) = (2+4)*5 = 30, but greater than 10 so X=0
+  - (1+1) * 2 = 4
+  - (1+2) * 2 = 6
+  - (1+1) * 4 = 8
+  - (1+1) * 5 = 10
+
+## Question 13
+For this problem, we'll have to first find all permutations to get the result of 6, then sum up the probabilities of each one:
+
+  1. $P((1, 2, 2)) = \frac{5}{15} * \frac{4}{15} * \frac{4}{15} = \frac{16}{2025}$
+  2. $P((2, 1, 2)) = \frac{4}{15} * \frac{5}{15} * \frac{4}{15} = \frac{16}{2025}$
+  3. $P((2, 2, 1)) = \frac{4}{15} * \frac{4}{15} * \frac{5}{15} = \frac{16}{2025}$
+  4. $P(X=6) = P((1, 2, 2))+P((2, 1, 2))+P((2, 2, 1)) = \frac{48}{2025} = 0.0237$
+
+## Question 14
+```{r}
+
+
+urn = c(1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 5)
+fun1 <- function(x){
+  y <- sort(x)
+  calc <- (y[1]+y[2])*(y[3])
+  output<- ifelse(calc>10,0, calc)
+  return(output)
+}
+
+# 1. Sample: Pick 3 random numbers from the urn with replacement and get the X value
+# 2. Then repeat this for 20000 times and put all of the results into a vector called "results"
+results = replicate(n=20000, expr=fun1(sample(x=urn, size=3, replace=TRUE)))
+
+# Then calculate F(9) = P(X <= 9). Like before, when we used the empirical CDF, we basically
+# just got the proportion of values in the vector less than or equal to a certain threshold. We'll
+# do the same here, and calculate the proportion of values that are less than or equal to 9 in our results vector.
+
+mean(results <= 9) # Probability is 0.976
+ecdf(results)(9)
+
+
+
+
+```
+
+## Question 15 
+Let the probability of winning $P_{w} = 0.1$. We can assume that the result of a single game, win or lose, is like a Bernoulli distribution since there are only two outcomes. We can assume independence since games don't affect each other. Since we're playing 25 games, we can treat this as a binomial distribution with n=25 trials. 
+
+1. $P(win \geq 3) = 1 - P(win < 3) = 1 - P(win = 0) + P(win = 1) + P(win = 2) = 1 - P(win \leq 2)$
+2. This is now in a form that R can calculate.
+
+
+```{r}
+1 - pbinom(q=2, size=25, prob=0.1) # 0.462
+```
+3. $P(win \geq 3) = 0.462$
+
+
+# Problem 4
+
+## Question 16
+You'd write the equations to calculate the areas of the "2a" and "a" sections, and set it equal to 1. The base length for both sections is 1, and the heights are $b$. However for the triangle, you'd need to factor in 0.5 to calculate the area of the triangle.
+1. $2a+a = 1$
+2. $1(b) + \frac{1}{2}(1)(b) = 1$
+3. $1.5b = 1$
+4. $b = 0.66$
+
+## Question 17
+$P(X=1.5) = 0$. This is because the probability of an exact value in the context of a continuous random variable is 0. In the context, we calculate probability is based on area and to do that we use intervals, not single values. A good way to think about it is that a single value has an infinitesimal width, and so there's not really any area when multiplying by the height.
+
+
+## Question 18
+
+1. $P(2.7 < X < 3.7) = P(X < 3.7) - P(X < 2.7)$
+2. $P(X < 3.7) = 1$. We can see that $X=3.7$ is way off the part of the area that has any actual area. Since this is a CDF, this contains all of the probability/area in the graph, making it 1.
+3. $P(X<2.7) = 1(0.66) + \int_{2}^{2.7}{2-\frac{2}{3}xdx} = 0.66 + 0.30 = 0.96$
+4. $P(2.7 < X < 3.7) = 0.04$
+
+When calculating the $P(X<2.7)$ you would notice that the given $f(x)$ is the function on the graph from [2,3], so you'd use that and do simple integration with it (power rule).
+
+## Question 19
+1. Remember that the median is just the 0.5-quantile, so find the point S.T. the area from $(-\infty, k) = 0.5$. You can reason that since the square encloses 0.66 of the area, the point $k$ is within this square.
+2. $(k - 1)(0.66) = 0.5$
+3. $k = 1.75$. 
+4. 0.5-quantile (median) is 1.75
+
+
+## Question 20
+To get the expected value, you would multiply the midpoint of each section by the corresponding area of that section:
+
+1. $P_{1} = 1.5, P_{2} = 2.5$
+2. $A_{1} = 1(b) = 0.66$. $A_{2} = \int_{2}^{3}{2-\frac{2}{3}xdx}= 0.33$
+3. $E(X) = P_{1}A_{1} + P_{2}A_{2} = 1.5(0.66)+ 2.5(0.33) = 1.82$

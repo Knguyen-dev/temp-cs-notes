@@ -1,0 +1,417 @@
+---
+title: "KevinNguyenFinalExamWork"
+author: "Kevin Nguyen"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Problem 1
+
+## Question 1 
+
+Nutrifood's perspective. So Nutrifood's belief should be the null hypothesis. Nutrifood believes that the food has nutritional intake
+
+- $H_{0}: \mu \geq 2800$; Nutrifood's default claim
+- $H_{1}: \mu < 2800$; CSA's opposing belief that it is calorie deficient
+
+
+## Question 2 
+
+```{r}
+calories_vector = c(2823, 2822, 2764, 2748, 2844, 2705, 2749, 2835, 2797, 2770, 2756, 2738, 2787, 2831, 2786, 2713, 2835, 2885, 2806, 2744, 2782, 2788, 2810, 2765, 2775, 2779, 2785, 2764, 2702, 2835)
+mu_0 = 2800 # assumed by h0
+xbar = mean(calories_vector)
+s = sd(calories_vector)
+n = length(calories_vector)
+se = s / sqrt(n)
+t = (xbar - mu_0) / se # -2.0064
+
+
+
+```
+1. The test statistic in this case is likely a t-statistic because we don't know $\sigma$.
+2. $t = \frac{\bar{x} - \mu_{0}}{s / \sqrt{n}} = \frac{2784.1 - 2800}{43.40 / \sqrt{30}} = -2.0064$
+
+## Question 3 
+
+```{r}
+# Left sided test. find area of the t-distribution with n-1 degrees of freedom
+pt(q=t, df=n-1) # 0.0271
+
+```
+This means $p=0.02$
+
+## Question 4
+Since $p=0.02 < \alpha = 0.04$, we fail to reject $H_{0}$. This means that there's no enough statistical evidence to conclude that there's a nutritional deficiency in the food. As a result, CSA should issue a public apology because they were wrong.
+
+## Question 5
+```{r}
+
+confidence = 0.90
+alpha = 1 - confidence
+
+# Find the 1-alpha/2 quantile for the t-dist. with n-1 degrees of freedom
+critical_value = qt(p=1-(alpha/2), df=n-1) 
+
+lower_bound = xbar - critical_value * se # 2770.63
+upper_bound = xbar + critical_value * se # 2797.56
+```
+
+# Problem 2 
+
+## Question 6 
+
+1. Experimental Unit: A tree
+2. This is a two sample problem, with the first population being all grand fir trees, and the second being all western red cedar trees.
+3. One measurement is being taken, and it's the diamater of each tree measured at a fixed distance perpendicular to bole, in milimeters.
+4. The parameter of interest is $\Delta = \mu_{1} - \mu_{2}$, the difference in average diameter between grand fir and western red cedar trees.
+    1. $\mu_{1}$: Average diamater of a western red cedar.
+    2. $\mu_{2}$: Average diameter of a grand fir.
+    
+5. The hypotheses are:
+    1. $H_{0}: \Delta \leq 0$
+    2. $H_{1}: \Delta > 0$
+
+
+## Question 7 
+You'd want to use s 2-sample Welch's t test especially since we don't know the variances of the populations.
+
+## Question 8 
+```{r}
+# install.packages("alr4")
+library(alr4)
+
+
+wc = subset(ufc, subset = (Species == "WC"))
+gf = subset(ufc, subset = (Species == "GF"))
+
+xbar1 = mean(wc$Dbh)
+xbar2 = mean(gf$Dbh)
+n1 = nrow(wc) 
+n2 = nrow(gf) 
+s1 = sd(wc$Dbh)
+s2 = sd(gf$Dbh)
+se = sqrt((s1^2 / n1) + (s2^2 / n2)) # 22.63
+
+
+```
+Standard error is $22.63$
+
+## Question 9
+```{r}
+delta_hat = xbar1-xbar2
+delta_0 = 0
+t_welch = (delta_hat - delta_0) / se # 1.739
+```
+Test statistic $t=1.73$
+
+## Question 10 
+
+```{r}
+# Calculate nuhat, which uses complex formula
+# Note: Save time by using t.test()
+
+
+t.test(x=wc$Dbh, y=gf$Dbh, alternative="greater", conf.level=0.95)
+
+# From t.test() function
+df = 240.79
+```
+$\hat{\nu} = 240.79$
+
+## Question 11
+```{r}
+
+# t.test() shows p = 0.0416
+
+# Verify it: we're doing a right tailed test
+p_value = 1 - pt(q=1.73, df=240.79) # 0.0424
+
+```
+
+The p-value is $p=0.04$
+
+## Question 12 
+Since $p = 0.04 < \alpha$, we reject $H_{0}$ and accept $H_{1}$. This means that we have significant statistical evidence to conclude that the average diameter of Western red cedar trees is greater than the average diameter of grand fir trees.
+
+
+# Problem 3
+
+## Question 13
+```{r}
+
+height = alr4::ufcwc$Height
+diameter = alr4::ufcwc$Dbh
+
+# Data points align with line in qqplot; approximately normal 
+qqnorm(height)
+qqline(height)
+
+# Distribution show by kernel distribution plot is 
+# symmetric and looks approximately normal.
+plot(density(height))
+
+# Most data points are aligned with the line. Only some 
+# data points at the end deviate slightly. Could be approx. normal.
+qqnorm(diameter)
+qqline(diameter)
+
+# Plot shows somewhat of a right skew
+plot(density(diameter))
+
+# Borrow trosset's scripts to create a scatter plot with contours
+binorm.estimate <- function(Data) {
+  #
+  #  This function estimates bivariate normal parameters.
+  #  Each row of the n-by-2 matrix Data contains a single
+  #  observation of (X,Y).  The function returns a vector 
+  #  of 5 estimates: mean of X, mean of Y, variance of X, 
+  #  variance of Y, correlation of (X,Y). 
+  #
+  n <- nrow(Data)
+  m <- c(sum(Data[, 1]), sum(Data[, 2]))/n
+  v <- c(var(Data[, 1]), var(Data[, 2]))
+  z1 <- (Data[, 1] - m[1])/sqrt(v[1])
+  z2 <- (Data[, 2] - m[2])/sqrt(v[2])
+  r <- sum(z1 * z2)/(n - 1)
+  return(c(m,v,r))
+}
+
+binorm.scatter <- function(Data) {
+  #
+  #  This function plots a scatter diagram of the data
+  #  contained in the n-by-2 data matrix Data.  It also
+  #  superimposes the sample concentration ellipse.
+  #
+  ndots <- 628
+  xmin <- min(Data[, 1])
+  xmax <- max(Data[, 1])
+  xmid <- (xmin + xmax)/2
+  ymin <- min(Data[, 2])
+  ymax <- max(Data[, 2])
+  ymid <- (ymin + ymax)/2
+  dif <- max(xmax - xmin, ymax - ymin)/2
+  xlim <- c(xmid - dif, xmid + dif)
+  ylim <- c(ymid - dif, ymid + dif)
+  par(pty = "s")
+  plot(Data,xlab="x",ylab="y",xlim=xlim,ylim=ylim,
+       pch=".",cex=2)
+  #
+  #  Value of cex sets size of plotting symbol.
+  #
+  title("Scatter Diagram")
+  v <- binorm.estimate(Data)
+  m <- matrix(v[1:2], nrow = 2)
+  off <- v[5] * sqrt(v[3] * v[4])
+  C <- matrix(c(v[3], off, off, v[4]), nrow = 2)
+  E <- eigen(C,symmetric=TRUE)
+  a <- 1:ndots/100
+  Y <- cbind(cos(a), sin(a))
+  Y <- Y %*% diag(sqrt(E$values)) %*% t(E$vectors)
+  Y <- Y + matrix(rep(1, ndots), nrow = ndots) %*% t(m)
+  lines(Y)
+}
+
+binorm.ellipse <- function(pop) {
+  #
+  #  This function plots the concentration ellipse of a
+  #  bivariate normal distribution.  The 5 parameters are
+  #  specified in the vector pop in the following order: 
+  #  mean of X, mean of Y, variance of X, variance of Y, 
+  #  correlation of (X,Y).  Example: pop <- c(0,0,1,4,.5)
+  #
+  ndots <- 628
+  m <- matrix(pop[1:2], nrow = 2)
+  off <- pop[5] * sqrt(pop[3] * pop[4])
+  C <- matrix(c(pop[3], off, off, pop[4]), nrow = 2)
+  E <- eigen(C,symmetric=TRUE)
+  a <- 0:ndots/100
+  X <- cbind(cos(a), sin(a))
+  X <- X %*% diag(sqrt(E$values)) %*% t(E$vectors)
+  X <- X + matrix(rep(1, ndots + 1), ncol = 1) %*% t(m)
+  xmin <- min(X[, 1])
+  xmax <- max(X[, 1])
+  ymin <- min(X[, 2])
+  ymax <- max(X[, 2])
+  dif <- max(xmax - xmin, ymax - ymin)
+  xlim <- c(m[1] - dif, m[1] + dif)
+  ylim <- c(m[2] - dif, m[2] + dif)
+  par(pty = "s")
+  plot(X,type="l",xlab="x",ylab="y",xlim=xlim,ylim=ylim)
+  title("Concentration Ellipse")
+}
+
+# Scatter plot
+binorm.scatter(cbind(height, diameter))
+```
+
+- Height looks normal
+- The diameter doesn't look normal, but it doesn't show extreme deviations. It's just a small right skew and the distribution is roughly symmetric
+- The contour shows a strong and positive relationship
+
+## Question 14
+```{r}
+
+# Define custom function for calculating pearson's 
+calculate_pearson = function(x, y) {
+  xbar = mean(x)
+  ybar = mean(y)
+  s_x = sd(x)
+  s_y = sd(y)
+  n = length(x)
+  # just treat z as the things that need to be multiplied
+  z_x = (x - xbar) / s_x
+  z_y = (y - ybar) / s_y
+  r = sum(z_x * z_y) / (n-1) # 0.6235
+  return (r)
+}
+
+r = calculate_pearson(height, diameter) # 0.84
+
+# Verify answer with builtin function
+cor(x=height, y=diameter) # 0.84335, answer verified
+```
+## Question 15
+```{r}
+# Create a linear model where height is predictor and diameter is response
+model1 = lm(diameter ~ height)
+
+beta0hat = summary(model1)$coef[1,1]    # -135.48
+beta1hat = summary(model1)$coef[2, 1]   # 2.23
+se_beta1hat = summary(model1)$coef[2,2] # 0.1214
+```
+The slope is 2.23
+
+## Question 16
+- $H_{0}: \beta_{1} \leq 2$
+- $H_{1}: \beta_{1} > 2$
+
+```{r}
+k = 2 # assumed by H0
+t.stat = (beta1hat - k) / se_beta1hat # 1.899
+
+```
+Test statistic $t=1.89$
+
+## Question 17
+Essentially, you're doing a right tailed test. For hypothesis testing with slopes, your test statistics are following a t-distribution with $n-2$ degrees of freedom.
+```{r}
+
+n = length(height)
+
+# P(T > t) = 1 - P(T <= t)
+p_value = 1 - pt(q=t.stat, df=n-2) # 0.0297
+
+```
+The p value is $p=0.02$
+
+## Question 18 
+```{r}
+confidence = 0.94
+alpha = 1 - confidence
+critical_value = qt(1-(alpha/2), df=n-2)
+lb = beta1hat - critical_value * se_beta1hat
+ub = beta1hat + critical_value * se_beta1hat
+c(lb, ub) # 2, 2.46
+```
+The upper bound is $2.46$
+
+## Question 19
+Now doing a prediction interval
+```{r}
+
+x_star = data.frame(Dbh=200)
+prediction = predict(model1, newdata=x_star, interval="prediction", level=0.99)
+lower_bound = prediction[1 ,"lwr"]
+upper_bound = prediction[1, "upr"]
+c(lower_bound, upper_bound) # 65.25, 587.16
+```
+
+## Question 20
+To do this, you'd need to calculate $r^{2}$
+
+```{r}
+
+# From function it says 0.71 as multiple r_squared and adjusted is 0.709
+# In either case, if you're going to round up to 2 decimals you're 
+# going to get 0.71
+summary(model1)
+r_squared = 0.7113
+```
+Coefficient of determination is $r^{2} = 0.71$
+
+## Question 21
+```{r}
+
+plot(model1, which=1)
+
+
+
+
+```
+
+- The variance doesn't seem constant in this one. It seems like as the height increase, the variance for the diameter increases as well. Like a cone. I'll say the residual plot shows that the variance changes for different fitted values.
+- Thee residual plot does have obvious curvature, the line is curved, it's cone shaped as well.
+
+
+# Problem 4
+
+## Question 22
+
+```{r}
+# Get the data, set the probability to 0.10 for all wedges
+wedges <- 1:10
+observed_counts <- c(108, 98, 102, 115, 93, 97, 91, 105, 93, 98)
+p = c(0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10)
+total_sample_size = sum(observed_counts)
+
+# Calculate the expected values
+expected_counts = total_sample_size * p
+
+
+# G2 = 5.065
+G2 = 2 * sum(observed_counts * log(observed_counts/expected_counts))
+
+```
+We used the likelihood ratio test statistic and got $5.06$
+
+## Question 23
+- $H_{0}$: Each wedge has the same chance of being selected, equal probabilities
+- $H_{1}$: The probabilities are not equal
+
+Remember that the p-value for a chi-squared test is gained by doing getting the right tailed area of a chi-squared distribution. There are 10 categories here, so $10-1 = 9$, which is a simpler way of handling degrees of freedom.
+
+Calculate the right tailed area for a chi-squared distribution with 9 degrees of freedom. 
+
+```{r}
+
+p_value = 1 - pchisq(q=G2, df=9) # 0.82
+p_value
+```
+The p-value is $p=0.82$
+
+## Question 24
+
+Only 9 degrees of freedom are needed for this test:
+
+1. Unrestricted set has 10
+2. Restricted set has 0
+
+Then $(10-1) - 0 = 9$
+
+
+## Question 25
+Since $p = 0.82$, which is greater than most values of $\alpha$, we fail to reject $H_{0}$. We do not have significant statistical evidence to conclude that at least one wedge doesn't have the same chance of being selected as the others.
+
+The closest answer on the list is "We don't have enough evidence to conclude that different wedges have different chances/probabilities"
+
+
+## Question 26
+- $H_{0}:$ P_{even} = P_{odd}
+- $H_{1}:$ P_{even} != P_{odd}
+
+Still $k=10$ categories. The restricted set is the model under the null hypothesis. However I think we are still using 10 cells. I think it could be (10-1) - 1, because we are imposing on extra thing?

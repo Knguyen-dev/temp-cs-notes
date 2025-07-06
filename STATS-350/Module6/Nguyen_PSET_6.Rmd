@@ -1,0 +1,339 @@
+---
+title: "KevinNguyen_PSET_6"
+author: "Kevin Nguyen"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Question 1
+
+```{r}
+L = 2
+sigma = 5
+
+
+# 2. 
+q = -qnorm(0.005)
+q2 = qnorm(1-0.01/2)
+
+n = (2*q*sigma/L)^2
+n # 165.87, but you need to round this up
+```
+- You need $n=166$ measurements.
+
+- Notes:
+  - Get the left tailed quantile and negate it which should be equivalent to getting the right tailed quantile, which we do on the next line.
+  - Then plug in the quantile value we find. It doesn't really matter whether you use the left or right quantile on this, since it's going to be square rooted anyways.
+
+# Question 2
+
+## Part a
+```{r}
+
+library(nycflights23) # Load lib
+population1 <- nycflights23::flights$arr_delay
+population1 <- na.omit(population1)
+
+hist(population1)
+qqnorm(population1)
+qqline(population1)
+```
+From The distribution is not normal, but rather right skewed:
+- Normal Probability Plot: In the normal probability plot, the data initially follows the line, however about halfway through it starts departing extremely above the line. This indicates that the distribution is not normal since it departs from the straight line, and since it skews up, it indicates the graph skews towards larger values (to the right)
+- Histogram: You can clearly see the right skew in the histogram, with the most of the data being below zero, however the remainder spreads itself above 0.
+
+## Part b
+```{r}
+
+set.seed(136)
+
+mu = mean(population1)
+sum_of_squares = sum((population1-mu)^2)
+sigma2 = sum_of_squares / length(population1) # Calculate the population standard deviation
+sigma = sqrt(sigma2)  # 57.868
+
+sample = sample(population1, size=200, replace=TRUE)
+alpha = 0.07
+sample_mean = mean(sample) # Sample mean: 14.485
+mean(population1)          # 
+
+
+```
+- Since we got $\sigma$, that means we can do a z-test, one sample z-test.
+  - $H_{0}: \mu \leq 4.5$
+  - $H_{1}: \mu > 4.5 $
+- Calculate $\bar{X} = 14.485$
+- Calculate z-statistic: $z = \frac{\bar{X} - \mu}{\sigma/\sqrt{n}} = \frac{14.485 - 4.5}{57.86 / \sqrt{200}}=2.44$
+- This is a right tailed test, so we need to find $P(Z \geq z=2.44)$:
+```{r}
+
+# P(Z >= 2.44) = 1 - P(Z < 2.44) = 1 - P(Z <= 2.44) = 0.007
+1-pnorm(q=2.44)
+
+# Note: Remember we're using z-scores so that correlates to the standard normally
+```
+Since $p = 0.007 < \alpha = 0.07$, we reject $H_{0}$ and accept $H_{1}$.
+
+
+## Part c.
+```{r}
+s_n = sd(sample) # 70,.01
+
+# P(T >= 2.01) = 1 - P(T <= 2.01)
+df = 199 # n-1 = 200-1 
+1 - pt(q=2.017, df=199) # 0.022
+```
+1. Calculate $s_{n} = 70.01$ to replace $\sigma$. Now you should re-calculate the test statistic under a t-distribution.
+2. Calculate t-statistic: $t = \frac{\bar{X}_{n} - \mu}{S_{n}/sqrt{n}} = \frac{14.485 - 4.5}{70.01 / \sqrt{200}} = 2.01$
+3. Calculate p value: $p = P(T \geq t) = 0.022$. Since $p < \alpha = 0.04$, we can reject $H_{0}$ and accept $H_{1}$. This means that we have enough evidence to believe that the waiting times are greater than 4.5 minutes.
+
+## Part d.
+```{r}
+mu = mean(population1) # 4.34
+```
+The true mean is $4.34$. We rejected $H_{0}$ when $H_{0}$ was correct making this a Type 1 Error. We made a type 1 error for both parts b and c we reject $H_{0}$ erroneously.
+
+
+## Part e.
+```{r}
+q = qnorm(p=0.985) # 2.17
+s = 57.86 # Using population stdev
+sample_mean = 14.485
+
+lb = sample_mean - q*(57.86/sqrt(200)) # 5.60
+ub = sample_mean + q*(57.86/sqrt(200)) # 23.36
+```
+
+1. $I = (\bar{X}-q\cdot \frac{\sigma}{\sqrt{n}}, \bar{X}+q\cdot \frac{\sigma}{\sqrt{n}})$
+2. $q = 1-\frac{\alpha}{2}$-quantile, which is the 0.985-quantile. Since we know $\sigma$, we'd use the normal distribution for that quantile.
+3. The interval we got was $(5.60, 23.56)$, and it doesn't contain our population mean.
+
+
+## Part f
+If we assume we don't know $\sigma$, we would use the sample standard deviation $s_{n} = 70.01$.
+
+1. Re-calculate the critical value but on a t distribution this time:
+```{r}
+
+q = qt(p=0.985, df=199) # 2.18
+
+# Re-calculate the interval; s = 70.01, our sample standard deviation
+lb = sample_mean - q*(s/sqrt(200)) # 5.60
+ub = sample_mean + q*(s/sqrt(200)) # 23.36
+
+c(lb, ub)
+
+
+```
+2. Interval is $(3.66, 25.30)$
+
+
+# Question 3 
+
+## Sub-question 2 
+- a. A single elderly man that's either a dog owner or has no pets.
+- b. Two populations. The first being the population of all elderly men with dogs. The second being the population of all elderly men without pets . 15 units were drawn from each population. This is a two sample problem.
+- c. One measurement is drawn from each. We measure the despressive tendency of a given unit.
+- d. The parameter of interest is $\Delta = \mu_{1} - \mu_{2}$, the average difference in depressive tendency for single elderly men with and without dogs. 
+  - $\mu_{1}$ is the average depressive tendency of single elder men with dogs. 
+  - $\mu_{2}$  is the average depressive tendency of single elderly men without dogs.
+- e. 
+  - $H_{0}: \Delta = \mu_{1} - \mu_{2} \geq 0$, the idea that people with dogs are as or even more depressed than people without pets.
+  - $H_{1}: \Delta < 0$, which indicates that single elderly men with dogs have a lower depressive tendency.
+
+
+## Sub-question 6
+- a. A given runner participating in both races.
+- b. One population, where we drew 120 runners. This is a one-sample problem, in particular a paired t-test.
+- c. 2 measurements are drawn from each experimental unit. The first measurement would be the time it takes for a runner to complete the race without the flats. The second measurement would be the time it takes for a runner to complete a race with the flats.
+- d. The parameter of interest is $\mu = \mu_{1}-\mu_{2}$, the average difference between race completion times (in seconds) between with or without the racing flats. 
+  - $\mu_{1}$ be the average race completion time with flats (in seconds).
+  - $\mU_{2}$ be the average time race completion time without flats (in seconds).
+- e:
+  - $H_{0}: \mu \leq 30$: Indicates that racing with flats is on average at most 30 seconds faster.
+  - $H_{1}: \mu > 30$: Indicates that racing on average is more than 30 seconds faster.
+
+
+## Sub-question 8
+- a. Experimental unit: A given person in enrolled in introductory swing dance classes.
+- b. We draw from a single population, the population of all people enrolled in introductory swing dancing class.
+- c. 2 measurements are drawn from each unit. We draw the resting pulse at the beginning and the one at the end of the week.
+- d. You'd let $X = A - B$ be a distribution of the difference in the resting pulses at the beginning and the end of the 10-week class. Let A be the beginning and B be the end. Then $\mu = E(X)$ would be the average difference between resting pulses at the beginning and the end of the 10-week class.
+- e. 
+  - $H_{0}: \mu \leq 0$: This indicates that on average the pulse at the start is greater than or equal to the pulse at the end of the 10 week class.
+  - $H_{1}: \mu > 0$: This indicates that on average, the resting pulse is lower than the starting pulse.
+
+
+# Question 4
+
+## Sub-question 1
+The experimental unit is the pair of seeds themselves. They're the same age, frown in nearly identical experiment. You'd measure the final height of each seddling in the pair.
+
+$X_{1}, ..., X_{n} \sim P$ could represent the sample mean difference between cross and self pollinated seeds. 
+
+$\theta$ be our population parameter, the average difference in height between the cross and self fertilized seeds. We can determine the hypotheses:
+  1. $\theta \leq 0$; 
+  2. $\theta > 0$: This is what Darwin wants to prove, that the size is greater.
+
+## Sub-question 2
+a. Just by looking at the differences that the distribution, we can clearly see that we have more lot more positive than negative values. There a lack of symmetry. this reinforces that this isn't a normal distribution.
+
+
+b. The distribution doesn't look symmetric as there seems to be a lot more positive than negative values. 
+
+## Sub-question 3
+1. First load the data into R and get a vector containing the differences.
+2. Then we'll calculate the t-statistic $t=\frac{\bar{\theta} - \theta}{s/\sqrt{n}} = \frac{2.606 - 0}{4.712 / \sqrt{15}} = 2.141$
+3. This is right tailed test because the idea is to show that cross_fertilized seeds had more vigor. Calculate $p = P(T > 2.141) = 1 - P(T \leq 2.141) = 0.025$.
+4. Since $p < \alpha = 0.05$, we can reject $H_{0}$ and accept $H_{1}$, as this gives us significant evidence that $\mu > 0$.
+```{r}
+cross_fertilized = c(23.5, 12.0, 21.0,22.0,19.1,21.5,22.1, 20.4, 18.3,21.6, 23.3,21.0, 22.1,23.0, 12.0)
+self_fertillized = c(17.4,20.4,20.0,20.0,18.4,18.6,18.6,15.3,16.5,18.0,16.3,18.0,12.8,15.5,18.0)
+difference = cross_fertilized - self_fertillized 
+ 
+n = length(difference)
+confidence = 0.95
+alpha = 1 - confidence
+sample_sigma = sd(difference)  # 4.712
+sample_mean = mean(difference) # 2.606
+df = n-1
+
+1-pt(q=2.141, df) # 0.02
+
+
+```
+
+
+1. With confidence=0.90, that means we have $\alpha = 0.10$ and each tail encloses an area of $0.05$ away from the center of the pdf.
+2. An interval is given by $I = (\bar{X} - q \cdot \frac{s}{\sqrt{n}}, \bar{X} + q \cdot \frac{s}{\sqrt{n}})$
+3. We don't know the true variance of the population of seeds, so we'll use this formula that uses the sample standard deviation rather than $\sigma$. Then we would calculate the $1-\frac{0.10}{2}$ or 0.95-quantile.
+4. After we find the quantile, we calculate the confidence interval as $(0.463,4.749)$.
+```{r}
+
+q = qt(p=0.95, df=14) # 1.76
+lower_bound = sample_mean-q * (sample_sigma/sqrt(n)) # 0.463
+upper_bound = sample_mean+q * (sample_sigma/sqrt(n)) # 4.749
+c(lower_bound, upper_bound)
+
+```
+
+
+# Question 5 
+- The question is asking whether the average `metacritic` scores are harsher (significantly lower) than the average `rottentomatoes` score. First let's determine the nature of the test:
+  - Experimental Unit: A film
+  - We only draw from one population, population of films in fandango.
+  - Two measurements will be taken on each unit, which is measuring the `metacritic` and `rottentomatoes` scores.
+  - The parameter of interest is $\mu = E(D_{i})$, where $D_{i} = Metacritic_{i} - RottenTomatoes_{i}$, the average difference in score for the same movie. This would be a one-sample t-test for paired data.
+- The hypotheses are:
+  - $H_{0}: \mu \geq 0$: which indicates the scores are about the same or `rottentomatoes` is lower on average.
+  - $H_{1}: \mu < 0$, which indicates that the `metacritic` scores are lower on average.
+  
+1. First calculate the t-statistic $t=\frac{\bar{X} - \mu}{s /\sqrt{n}} = \frac{-2.58 - 0}{13.279 / \sqrt{60}} = -1.505$
+2. This is a left tailed test, so we want $p = P(T \leq -1.50) = 0.069$.
+3. The question doesn't give us a value for $\alpha$, but let's say $\alpha = 0.05$. In this case since $p > \alpha$, we can't reject $H_{0}$, so we haven't found significant evidence for believing that the scores on Metacritic are a lot harsher. Here's the code for the problem:
+```{r}
+library(fivethirtyeight)
+set.seed(100)
+
+film_dataset = fivethirtyeight::fandango
+
+# 1. Calculate the difference in scores as a vector
+# 2. Take a random sample of 60 scores
+score_diff = film_dataset$metacritic - film_dataset$rottentomatoes
+score_sample = sample(x=score_diff, size=60)
+
+# 3. Calculate the sample mean and standard deviation
+sample_mean = mean(score_sample) # -2.58
+sample_sigma = sd(score_sample)  # 13.279
+
+# 4. Calculate the probability, which is pretty simple, but don't 
+# forget that we're working with the t-distribution since variance
+# is unknown.
+pt(q=-1.50, 59) # 0.069
+
+# Note: Just realized you could also calculate 
+# sigma since we literally have the entire 
+# population proportion, so then you'd do a z
+# -test. But I don't think it matters since 
+# we have a sample size 60, so the t-dist 
+# should be extremely similar to the normal.
+```
+
+
+# Question 6
+1. The data from the 12 normal subject seems roughly symmetric, maybe with a slight skew to the right since there's 2 outliers. The data from the diabetic group is roughly symmetric as well. This is all evident from their normal probability plots and their histograms.
+```{r}
+
+normal_data = c(4.1, 6.3, 7.8, 8.5, 8.9, 10.4, 11.5, 12.0, 13.8, 17.6, 24.3, 37.2)
+diabetic_data = c(11.5, 12.1, 16.1, 17.8, 24.0, 28.8, 33.9, 40.7, 51.3, 56.2, 61.7, 69.2)
+
+qqnorm(normal_data)
+qqline(normal_data)
+hist(normal_data)
+
+qqnorm(diabetic_data)
+qqline(diabetic_data)
+hist(diabetic_data)
+plot(density(diabetic_data))
+```
+2. 
+```{r}
+log_x_normal = log(normal_data)
+log_x_diabetic = log(diabetic_data)
+
+# Shows an approximately normal distribution for the normal data.
+qqnorm(log_x_normal)
+qqline(log_x_normal)
+
+# Also approximately normal
+qqnorm(log_x_diabetic)
+qqline(log_x_diabetic)
+
+# Yeah also approximately normal, though the
+# sqrt_x_normal does have 2 outliers to the 
+# far right. So the transforming data doesn't
+# magically fix the data, but it does correct 
+# most of it.
+sqrt_x_normal = sqrt(normal_data)
+sqrt_x_diabetic = sqrt(diabetic_data)
+
+qqnorm(sqrt_x_normal)
+qqline(sqrt_x_normal)
+
+qqnorm(sqrt_x_diabetic)
+qqline(sqrt_x_diabetic)
+
+```
+
+
+3. Based on the QQ plots, they do see mto be sampled from normal distributions because of the data aligns with the straight line on the plot. 
+
+4. To solve this, we'll take the logarithmic versions of the data and compare them. Here, we'd have $\Delta = \mu_{1} - \mu_{2}$, where $\mu_{1}$ is the average excretion from normal people and $\mu_{2}$ is the average excretion from diabetics:
+  - $H_{0}: \Delta \geq 0$
+  - $H_{1}: \Delta < 0$
+  - $T_{w} = \frac{\Delta - \Delta_{0}}{\sqrt{\frac{s^{2}_{1}}{n_{1}} + \frac{s^{2}_{2}}{n_{2}}}} = \frac{-0.957}{\sqrt{\frac{(0.595)^{2}_{1}}{12} + \frac{(0.63)^{2}_{2}}{12}}} = -3.825$
+  
+```{r}
+
+log_x_normal = log(normal_data)
+log_x_diabetic = log(diabetic_data)
+
+sample_mean_normal = mean(log_x_normal)
+sample_sigma_normal = sd(log_x_normal)
+c(sample_mean_normal, sample_sigma_normal)
+
+
+sample_mean_diabetic = mean(log_x_diabetic)
+sample_sigma_diabetic = sd(log_x_diabetic)
+
+c(sample_mean_diabetic, sample_sigma_diabetic)
+
+sample_delta = sample_mean_normal - sample_mean_diabetic
+sample_delta # -0.957
+
+```
+5. That is almost 4 standard deviations away from the mean. If we're doing a left tailed test, the probability that it would enclose would be around 0. Assuming that this result is correct, it gives me convincing evidence that the scientists are correct about diabetic people being able to release more excretion.

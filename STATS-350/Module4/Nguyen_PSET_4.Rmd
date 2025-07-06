@@ -1,0 +1,164 @@
+---
+title: "Nguyen_PSET4"
+author: "Kevin Nguyen"
+date: \today
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# Quick Check 1: Working with dataframes
+
+### Question 1
+```{r}
+# Get the description of "faithful" dataset; 
+help(faithful)
+```
+Wyoming
+### Question 2:
+- Incorrect guesses: 184.82,
+
+```{r}
+# Extract waiting column
+waiting <- faithful$waiting
+
+# this yields a different answer
+n = length(waiting)
+sample_mean <- mean(waiting)
+sample_variance <- sum((waiting -sample_mean)^2) / n
+sample_variance # 184.14
+```
+### Question 3 
+```{r}
+
+df = read.table("./data/butterfly.txt")
+forewing_area = df$FW.area
+quantile(forewing_area, probs=0.7)
+
+# The plugin estimate of a quantile should be 
+# the same as the quantile of the sample. 
+```
+### Question 4
+```{r}
+# Install and load the library containing the data frame
+install.packages("fivethirtyeight")
+library(fivethirtyeight)
+
+# Dataframe from the package. We need to get the description
+?fivethirtyeight::US_births_2000_2014
+```
+Some people are too superstitious to have a baby on Friday the 13th.
+
+### Question 5
+```{r}
+library(fivethirtyeight)
+library(ggplot2)
+
+# Load entire data frame
+births_df <- fivethirtyeight::US_births_2000_2014
+
+# Create a plot based on 'births' columns 
+ggplot(births_df, aes(sample = births)) +
+  stat_qq() +
+  stat_qq_line()
+
+# Base R Q-Q plot in the correct order
+qqnorm(births_df$births,
+       main = "Normal Q-Q Plot of US Daily Births (2000–2014)",
+       xlab = "Theoretical Quantiles",
+       ylab = "Sample Quantiles")
+qqline(births_df$births, col = "red", lwd = 2)
+```
+This is definitely not a normal distribution. Probalby not symmetric either
+
+# Quick Check 2: Random Samples, Simulations, and Functions in R
+
+- Question 1,2,3,4,5
+### Question 1
+```{r}
+# 1. Obtains a random sample of size 50 from a norm. dist. with mean 10 and variance 25
+# 2. Finding the 0.7-quantile of the sample? Well you could just do 
+sample <- rnorm(n=50,mean=10,sd=5)
+quantile(x=sample, probs=0.7)
+```
+0.7-quantile is 12.064
+
+### Question 2
+```{r}
+set.seed(1234)
+sample <- rbinom(n=25, size=5, prob=0.8) # 25 binomial samples
+sample[5] # R is one-indexed so this is the fifth position
+```
+
+### Question 3
+The vectors do contain the same data, but ordered differently. This is will always be true since there's 10 numbers, and we always pick those 10 numbers, due to no replacement. As a result, we can say their IQR values are equal, the order of the data in the vector doesn't affect that. 
+
+However they aren't the same vector. The seed ensures reproducibility, these are two independent samples of each other so they aren't identical. However if we did use replacement, we would have different results. The outcome with the difference in IQR is just the nature of the seed. If you change the seed, the values in `urn` will change, and then the IQRs of the two samples could be different. So here's the correct statements:
+- If the urn is bigger, IQR(x)-IQR(y) wouldn't be 0 probably.
+- Both outcomes would be different than zero if we use replace=TRUE
+- Both vectors are just the same vector with different orders.
+
+### Question 4
+```{r}
+vec <- c(7.73, 7.17, 18.79, 9.21, 15.37, 10.73, 12.90, 12.42, 13.92,
+         5.34, 6.85, 14.05, 9.63, 6.85, 4.75, 10.25, 17.33, 15.50,
+         11.18, 9.95, 12.93, 8.79, 14.59, 17.17, 11.23)
+range80 <- function(x) {
+  # Calculate the quantiles for the given data and return the difference.
+  a = quantile(x, probs=0.9)
+  b = quantile(x, probs=0.1)
+  return(a-b)
+}
+range80(vec) # 9.652
+```
+
+
+### Question 5
+```{r}
+range80 <- function(x) {
+  a = quantile(x, probs=0.9)
+  b = quantile(x, probs=0.1)
+  return(a-b)
+}
+
+# Question 5
+# 1. Calculate range80 for one sample of 50 observations
+# 2. Create 10,000 replicas (separate samples) of the experiment
+samples = replicate(n=10000, expr={
+  sample_data = rbinom(n=50, size=20, prob=0.4)
+  return(range80(sample_data))
+})
+
+mean(samples)
+
+
+```
+
+
+# Quick Check 3: RMarkdown
+
+### Question 1
+HTML and PDF
+
+### Question 2
+ __two underscores for bold__
+
+Question 3
+Clearing the workspace may help find errors
+
+### Question 4
+- echo: Set this to false so that no code is shown
+- eval: Set this to like 4 so that it's the only calculation outputted
+```{r, echo=FALSE, eval=4}
+a <- 3
+b <- 4
+a
+a+b
+```
+
+### Question 5
+Use a dollar sign before and after the math equation. For example:
+
+$\bar{x} = \frac{1}{n}\sum_{i=1}^{n}{x_{i}}=\frac{x_{1}+x_{2}+...+x_{n}}{n}$
+
+

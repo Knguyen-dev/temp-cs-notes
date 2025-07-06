@@ -1,0 +1,370 @@
+---
+title: "Nguyen_PSET_7"
+author: "Kevin Nguyen"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Question 1
+![](./PSET_7_Q1.png)
+
+
+# Question 2
+
+
+
+## Part a
+```{r}
+# Install Trosset's functions for graphs
+source("trosset_scripts.R")
+
+# Load and drop rows where fertility or ppgdp aren't finite
+# Note: this avoids issues in the future
+df = carData::UN
+df <- df[is.finite(df$fertility) & is.finite(df$ppgdp), ]
+
+fertility_log = log(df$fertility)
+ppgdp_log = log(df$ppgdp)
+
+# Normal probability plots
+qqnorm(fertility_log)
+qqline(fertility_log)
+qqnorm(ppgdp_log)
+qqline(ppgdp_log)
+
+# Drawing scatter plots
+plot(ppgdp_log, fertility_log, 
+     main = "Scatter Plot", 
+     xlab = "X Values", 
+     ylab = "Y Values", 
+     pch = 19,         # Solid circles
+     col = "blue")
+```
+
+
+The distributions of `fertility` and `ppgdp` seem somewhat skewed. In both distributions, whilst most of the data in the center aligns very closely with the line, at the tails of the distributions, the data points deviate moderately from the line. The data points form an S shape, where points on the left are above the line whilst points on the right are below it.
+
+From the scatter plot, the data has a negative correlation. If the data was normal, the scatter plot would have had a correlation that would be near zero (a near circular contour), but this one doesn't. This further reinforces that this data doesn't come from a bi-variate normal distribution.
+
+## Part b
+```{r}
+
+# Now pass the clean data to the function
+binorm.scatter(cbind(ppgdp_log, fertility_log))
+```
+
+The contour shows a negative association between the logarithms of fertility and ppgdp. The contour is very stretched thin, which shows that this negative associate is strong. This directly goes against the assumption, as a contour of a normal bi-variate distribution would be a circle, rather than a stretched ellipse like this.
+
+
+## Part c
+```{r}
+# Define a function that standardizes the data
+standardize = function(data) {
+  xbar = mean(data, na.rm=TRUE)
+  sd = sd(data, na.rm=TRUE)
+  standardized_data = (data - xbar) / sd
+  return (standardized_data)
+}
+  
+  
+fertility_log_standard = standardize(fertility_log)
+ppgdp_log_standard = standardize(ppgdp_log)
+
+
+head(fertility_log_standard, 6)
+
+head(ppgdp_log_standard, 6)
+```
+- First 6 values of fertility log standardized: 1.9647134 -1.1018133 -0.3382355  1.6268423 -0.4923977 -0.3069763
+- First 6 values of ppgdp log standardized: -1.44513719 -0.16298156 -0.03721974 -0.05927964  0.68367510  0.42306457
+
+
+## Part d
+```{r}
+# Calculate r using regular formula
+calculate_pearson = function(x, y) {
+  
+  xbar = mean(x)
+  ybar = mean(y)
+  s_x = sd(x)
+  s_y = sd(y)
+  n = length(x)
+  
+  # just treat z as the things that need to be multiplied
+  z_x = (x - xbar) / s_x
+  z_y = (y - ybar) / s_y
+  
+  r = sum(z_x * z_y) / (n-1) # 0.6235
+  return (r)
+}
+
+# -0.7252
+obtained_r = calculate_pearson(fertility_log_standard, ppgdp_log_standard)
+
+# Use built in function for calculations
+# -0.725. Answers match, everything's good!
+expected_r = cor(fertility_log_standard, ppgdp_log_standard)
+
+
+c(obtained_r, expected_r)
+```
+The Pearson's correlation coefficient was $-0.725$, indicating a strong negative association/correlation. This supports our finding in parts a and b, further reinforcing that the data has a strong negative association, and therefore doesn't come from a bi-variate normal distribution.
+
+
+# Question 3
+
+## Part a
+```{r}
+
+fertility = df$fertility
+ppgdp = df$ppgdp
+
+plot(ppgdp, fertility, 
+     main = "Scatter Plot", 
+     xlab = "X Values", 
+     ylab = "Y Values", 
+     pch = 19,         # Solid circles
+     col = "blue")
+
+
+```
+
+The graph is similar to the $\frac{1}{x}$ function. As $x \to 0$, y increases up to 7. As x increases, it stays around the range of 1 to 3.  
+
+A straight horizontal line mean function likely isn't the best choice since it won't minimize the distance of the various data points at the beginning. I think a better mean function would be one that averages both out, so a diagonal line from origin to (2e+04, 3) could be as it tries to have equal distances from both "sides" of the graph.
+
+## Part b
+```{r}
+
+lm(fertility_log ~ ppgdp_log)
+plot(ppgdp_log, fertility_log, 
+     main = "Scatter Plot", 
+     xlab = "X Values", 
+     ylab = "Y Values", 
+     col = "blue")
+```
+
+Essentially, in part b, we saw a graph that showed us the y-values decreasing as x-increased. This scatter plot of the logarithms shows that same idea, a negative association, making that model in part b to seem like a plausible model.
+
+
+## Part c
+```{r}
+
+
+# Create a linear model based on the x and y values 
+
+# Since fertility_log and ppdpg_log aren't in a dataframe, in order to call lm for 
+# creating a linear model, you'd have to put them in a dataframe?
+
+mod1 = lm(fertility_log ~ ppgdp_log)
+
+summary(mod1)
+```
+- Linear model $\hat{y}_{i} = \hat{\beta}_{0}+\hat{\beta}_{1}x_{i} = 2.66-0.20x_{i}$
+
+## Part d 
+```{r}
+
+# 1. Create scatter plot itself
+plot(ppgdp_log, fertility_log,
+     xlab = "log(ppgdp)",
+     ylab = "log(fertility)",
+     main = "Log(Fertility) vs Log(PPGDP)",
+     pch = 19, col = "blue")
+
+# 2. Add the regression line
+abline(mod1, col="red", lwd=2)
+```
+
+## Part e
+When the natural logarithm of `ppgdp` for a given country increases by one unit, on average the natural logarithm of fertility in that same country decreases by 0.207 units.
+
+
+# Question 4
+
+## Part a 
+- $H_{0}: \beta_{1} = 0$
+- $H_{1}: \beta_{1} \neq 0$
+
+```{r}
+
+# 1. Get linear model
+# 2. Set k=0 for assuming null hypothesis of beta_{1} = 0 
+mod1 = lm(fertility_log ~ ppgdp_log)
+summary(mod1)
+k = 0
+n = length(fertility_log)
+
+# 3. Get the sample slope, and information to calculate the t-statistic 
+# 4. Calculate p = 2 * p(T >= |t|)) = 2 * (1 - p(T<=|t|))
+beta1hat = summary(mod1)$coef[2,1]
+se.beta1hat = summary(mod1)$coef[2,2]
+
+# Note: T-statistic matches for what is shown for beta1hat
+t.stat = (beta1hat - k) / se.beta1hat # -14.78
+
+p_value = 2 * (1-pt(abs(t.stat), n-2)) # 0
+```
+Since $p=0 < \alpha = 0.03$, we can reject $H_{0}$ and accept $H_{1}$. We have significant statistical evidence to conclude that $\beta_{1}$, the true average rate of change of fertility per unit of `ppgdp` is not zero.
+
+## Part b
+- $H_{0}: \beta_{1} \geq 0$
+- $H_{1}: \beta_{1} < 0 $
+- This is a left-tailed test.
+
+```{r}
+
+# 1. calculate model, length and k
+mod1 = lm(fertility_log ~ ppgdp_log)
+k = 0
+n = length(fertility_log)
+
+# 2. Get the sample slope, and information to calculate the t-statistic 
+# Note: This should be the same as the last part
+beta1hat = summary(mod1)$coef[2,1]
+se.beta1hat = summary(mod1)$coef[2,2]
+t.stat = (beta1hat - k) / se.beta1hat
+
+# 3. The difference is here as the p-value calculation is different.
+# Here p = P(T <= t)= 4.53*10^-34 = 0
+p_value = pt(t.stat, n-2)
+```
+Since $p = 0 < \alpha = 0.03$, we can reject $H_{0}$ and accept $H_{1}$. We have significant statistical evidence to conclude that $\beta_{1}$, the true average rate of change of fertility per unit of `ppgdp` is negative.
+
+## Part c
+
+1. The coefficient of determination $r^{2} = \sum_{i=1}^{n}{(y_{i} - \bar{y})^{2}}$
+2. Then do the calculations in R:
+```{r}
+summary(mod1) # r_squared = 0.526
+```
+The coefficient of determination $r^{2} = 0.526$ indicates that 52.6% of the variation in the fertility rate (`fertility`) can be explained by the per capital GDP (`ppgdp`).
+
+
+## Part d
+
+1. Remember the model $\hat{y}_{i} = 2.665-0.207x_{i}$. However this model expects x-values that have been transformed via the natural log. So first calculate $ln(1000) = 6.907$
+2. Then you should just plug it in and solve for $\hat{y}_{i} = 2.665-0.207(6.907) = 1.235$, which is the predicted `log(fertility)`.
+3. Now we need to calculate the $95%$ interval:
+```{r}
+
+confidence = 0.95
+x_star = data.frame(ppgdp=log(1000))
+prediction = predict(mod1, newdata = x_star, interval="prediction", level=confidence)
+
+lb = prediction[1, "lwr"]
+ub = prediction[1, "upr"]
+
+c(lb, ub) # (0.768, 1.98)
+
+c(exp(lb), exp(ub)) # (2.155, 7.307)
+```
+The prediction interval is $(0.768, 1.989)$.
+
+
+## Part e
+From our last answer, we would just apply the exponential function to the lower and upper bounds. This is $(2.155, 7.307)$.
+
+
+# Question 5
+
+
+## Part a 
+```{r}
+df = carData::Davis
+x = df$weight
+y = df$height
+mod1 = lm(y ~ x)
+```
+
+The regression line is given by $\hat{y}_{i} = 160.09 + 0.15x_{i}$.
+
+
+## Part b 
+```{r}
+# 1. Create scatter plot itself
+beta1hat = 0.150
+beta0hat = 160.09
+plot(x, y,
+     xlab = "weight",
+     ylab = "height",
+     main = "Height vs Weight",
+     pch = 19, col = "blue")
+abline(a = beta0hat, b = beta1hat, col = "red", lwd = 2)
+```
+
+The scatter plot seems to be positively associated and the linear regression line seems to align somewhat well with the datapoints, however you can visualize a better fitting line. 
+
+The reason that the line looks like it's not as positively sloped is due to that one outlier at the bottom pulling down that linear regression line
+
+
+## Part c
+```{r}
+df = carData::Davis
+x = df$weight
+y = df$height
+mod1 = lm(y ~ x)
+
+
+# Default hypotheses:
+# H_0: beta1 = 0
+# H_1: beta1 != 0
+summary(mod1)
+# P-value = 0.00715
+```
+Then the p-value is $p=0.00715$. Even if $\alpha = 0.01$, we will still reject $H_{0}: \beta_{1} = 0$ and accept $H_{1}: \beta_{1} \neq 0$.
+
+## Part d
+```{r}
+
+# 0.0359
+summary(mod1)$r.squared
+```
+Using the $R^{2}$ value, About 3.59% of the height variation is explained by the the weight value. 
+
+
+# Question 6
+
+## Part a 
+```{r}
+df = carData::Davis
+df = df[-12, ]
+
+x = df$weight
+y = df$height
+mod1 = lm(y ~ x)
+summary(mod1)
+
+# Part a. $\hat{y}_{i} = 160.09 + 0.15x_{i}$
+beta1hat = 0.15
+beta0hat = 160.09
+
+# Part b.
+plot(x, y,
+     xlab = "weight",
+     ylab = "height",
+     main = "Height vs Weight",
+     pch = 19, col = "blue")
+
+# Part c. p < 2.2e-16, essentially 0
+summary(mod1)
+
+# Part d. 
+summary(mod1)$r.squared # 0.594
+```
+The only thing that's changed extremely would be the correlation value. This is because in the original data, we had a single extreme outlier in the bottom right corner that decreased the correlation very extremely. But now that we removed the 12th observation, that outlier, our correlation is pulled back to positive.
+
+
+## Part b
+```{r}
+plot(mod1, which=1)
+```
+
+The residual plot is a null plot:
+1. The variation around the residuals is about constant. Whilst there's more variation in the center, we expect so since there's more data.
+2. Whilst it does have some curvature, the residual plot's line doesn't deviate from the horizontal too much, so this is acceptable.
