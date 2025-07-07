@@ -31,6 +31,30 @@ Cassandra is designed so that most operations should target a single partition t
 - Multi-partition operations require coordination between nodes, which Cassandra does not support and avoids. 
 - Within a partition, the data is sorted by clustering columns for efficient range queries.
 - Only have row-level locking. You should really only be modifying one row at a time, rather than trying to do some modifying operation involving multiple rows. We don't have ACID transactions.
+```bash
+# Define table
+CREATE TABLE messages (
+  chat_room_id text, -- Partition key
+  timestamp timeuuid,
+  user_id text,
+  message_contenet text,
+  PRIMARY KEY (char_room_id, timestamp)
+);
+
+# 1. Single partition queries, these are good. Cassandra knows exactly which nodes have this data, and we're only directly
+# accessing one partition. You can tell this because we're querying by one partition key value.
+SELECT * FROM messages WHERE chat_room_id = "general" ORDER BY timestamp DESC LIMIT 50;
+SELECT * FROM messages WHERE chat_room_id = 'general' 
+AND timestamp > '2024-01-01 00:00:00'
+AND timestamp < '2024-01-02 00:00:00';
+
+# 2. This is a multi-partition query and this is bad. As a result, we must contact multiple nodes, one for each room probably.
+# The coordinator sends queries to different nodes ,and waits for them to respond. Performance depends on the worst node.
+SELECT * FROM messages WHERE chat_room_id IN ('general', 'random', 'tech');
+```
+Single partition queries are just faster and more efficient, whilst multi-partition queries involve network overhead, coordination complexity, and this 
+doesn't scale well as your cluster grows. The single partition access pattern is fundamental to how Cassandra achieves its performance characteristics.
+
 
 **Data Consistency:**
 You can do quorums, which means you're writing and reading to the majority of nodes. You can tune your level of consistency on how strong your level of eventual consistency should be for your application. Cassandra has mechanisms that help keep data fresh between nodes as well:
